@@ -1,8 +1,10 @@
-from fastapi import FastAPI
+ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 from google import genai
+from pydantic import BaseModel
 import os
+import secrets
 
 
 # ==========================================
@@ -33,11 +35,16 @@ app.add_middleware(
 
 
 # ==========================================
-# API DE GEMINI
+# VARIABLES DE ENTORNO
 # ==========================================
 
 api_key = os.getenv("GEMINI_API_KEY")
+dev_password = os.getenv("PALEOIA_DEV_PASSWORD")
 
+
+# ==========================================
+# CLIENTE GEMINI
+# ==========================================
 
 if api_key:
     client = genai.Client(
@@ -48,7 +55,14 @@ else:
 
 
 # ==========================================
-# PERSONALIDAD DE PALEOIA
+# SESIONES DE DESARROLLADOR
+# ==========================================
+
+sesiones_desarrollador = set()
+
+
+# ==========================================
+# PERSONALIDAD NORMAL DE PALEOIA
 # ==========================================
 
 SYSTEM_PROMPT = """
@@ -93,6 +107,39 @@ pero científicamente correcta.
 
 
 # ==========================================
+# PERSONALIDAD DESARROLLADOR
+# ==========================================
+
+DEVELOPER_PROMPT = """
+Eres PaleoIA en MODO DESARROLLADOR.
+
+El usuario ha sido autenticado como
+desarrollador.
+
+En este modo puedes responder preguntas
+sobre cualquier tema permitido y no estás
+limitado exclusivamente a paleontología.
+
+Mantén siempre una respuesta clara,
+útil y científicamente responsable.
+
+Cuando una pregunta sea científica,
+diferencia entre hechos, estimaciones
+e hipótesis cuando sea necesario.
+
+Responde siempre en español.
+"""
+
+
+# ==========================================
+# MODELO PARA LOGIN
+# ==========================================
+
+class LoginRequest(BaseModel):
+    password: str
+
+
+# ==========================================
 # PÁGINA PRINCIPAL
 # ==========================================
 
@@ -101,7 +148,67 @@ def inicio():
 
     return {
         "mensaje": "🦖 PaleoIA está funcionando",
-        "api_key_detectada": bool(api_key)
+        "api_key_detectada": bool(api_key),
+        "modo_desarrollador": "disponible"
+    }
+
+
+# ==========================================
+# ACTIVAR MODO DESARROLLADOR
+# ==========================================
+
+@app.post("/activar-desarrollador")
+def activar_desarrollador(datos: LoginRequest):
+
+    if not dev_password:
+
+        return {
+            "exito": False,
+            "mensaje": "❌ El modo desarrollador no está configurado."
+        }
+
+
+    if not secrets.compare_digest(
+        datos.password,
+        dev_password
+    ):
+
+        print("⚠️ Intento de acceso de desarrollador rechazado")
+
+        return {
+            "exito": False,
+            "mensaje": "❌ Contraseña incorrecta."
+        }
+
+
+    # Crear token aleatorio
+    token = secrets.token_urlsafe(32)
+
+    sesiones_desarrollador.add(token)
+
+
+    print("🔓 MODO DESARROLLADOR ACTIVADO")
+
+
+    return {
+        "exito": True,
+        "mensaje": "🧠 Modo desarrollador activado.",
+        "token": token
+    }
+
+
+# ==========================================
+# DESACTIVAR MODO DESARROLLADOR
+# ==========================================
+
+@app.post("/desactivar-desarrollador")
+def desactivar_desarrollador(token: str):
+
+    sesiones_desarrollador.discard(token)
+
+    return {
+        "exito": True,
+        "mensaje": "🔒 Modo desarrollador desactivado."
     }
 
 
@@ -110,7 +217,10 @@ def inicio():
 # ==========================================
 
 @app.get("/preguntar")
-def preguntar(pregunta: str):
+def preguntar(
+    pregunta: str,
+    token: str = ""
+):
 
     print("\n================================")
     print("🦖 PREGUNTA RECIBIDA:")
@@ -135,6 +245,37 @@ def preguntar(pregunta: str):
 
 
     # ======================================
+    # COMPROBAR MODO DESARROLLADOR
+    # ======================================
+
+    modo_desarrollador = (
+        token in sesiones_desarrollador
+    )
+
+
+    if modo_desarrollador:
+
+        prompt = (
+            DEVELOPER_PROMPT
+            + "\n\nPregunta del usuario:\n"
+            + pregunta
+        )
+
+        print("👨‍💻 Modo desarrollador")
+
+
+    else:
+
+        prompt = (
+            SYSTEM_PROMPT
+            + "\n\nPregunta del usuario:\n"
+            + pregunta
+        )
+
+        print("🦖 Modo PaleoIA")
+
+
+    # ======================================
     # CONECTAR CON GEMINI
     # ======================================
 
@@ -148,13 +289,9 @@ def preguntar(pregunta: str):
 
         respuesta = client.models.generate_content(
 
-           model="gemini-3.6-flash",
+            model="gemini-3.6-flash",
 
-            contents=(
-                SYSTEM_PROMPT
-                + "\n\nPregunta del usuario:\n"
-                + pregunta
-            )
+            contents=prompt
         )
 
 
@@ -168,7 +305,8 @@ def preguntar(pregunta: str):
 
         return {
             "pregunta": pregunta,
-            "respuesta": texto
+            "respuesta": texto,
+            "modo_desarrollador": modo_desarrollador
         }
 
 
@@ -181,6 +319,7 @@ def preguntar(pregunta: str):
         print("\n❌ ERROR DE GEMINI:")
         print(repr(error))
         print("================================\n")
+
 
         return {
             "pregunta": pregunta,
