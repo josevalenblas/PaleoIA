@@ -1,0 +1,406 @@
+ <!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>PaleoIA | Explora el pasado</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+
+<body>
+
+
+    <!-- ==========================================
+         HOJAS DECORATIVAS
+    =========================================== -->
+
+    <div class="hojas hojas-izquierda">
+        🌿🌿
+    </div>
+
+    <div class="hojas hojas-derecha">
+        🌿🌿
+    </div>
+
+
+
+    <!-- ==========================================
+         ENCABEZADO
+    =========================================== -->
+
+    <header>
+
+        <div class="logo">
+
+            <div class="logo-dino">
+                🦖
+            </div>
+
+            <div>
+
+                <h1>
+                    PaleoIA
+                </h1>
+
+                <span>
+                    Explora el pasado
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- BOTÓN MENÚ CELULAR -->
+
+        <button
+            id="botonMenu"
+            class="boton-menu"
+            aria-label="Abrir menú"
+        >
+
+            ☰
+
+        </button>
+
+
+        <button class="boton-info">
+
+            ¿Qué es PaleoIA?
+
+        </button>
+
+    </header>
+
+
+
+    <!-- ==========================================
+         FONDO DEL MENÚ MÓVIL
+    =========================================== -->
+
+    <div
+        id="fondoMenu"
+        class="fondo-menu"
+    ></div>
+
+
+
+    <!-- ==========================================
+         BARRA LATERAL
+    =========================================== -->
+
+    <aside
+        id="barraLateral"
+        class="barra-lateral"
+    >
+
+        <div class="sidebar-logo">
+
+            🦖
+
+            <strong>
+                PaleoIA
+            </strong>
+
+        </div>
+
+
+        <button
+            id="nuevoChat"
+            class="nuevo-chat"
+        >
+
+            ＋ Nuevo chat
+
+        </button>
+
+
+        <div class="historial">
+
+            <p class="historial-titulo">
+
+                Conversaciones
+
+            </p>
+
+
+            <div id="listaConversaciones">
+
+            </div>
+
+        </div>
+
+    </aside>
+
+
+
+    <!-- ==========================================
+         CONTENIDO PRINCIPAL
+    =========================================== -->
+
+    <main>
+
+
+        <!-- ==========================================
+             PRESENTACIÓN
+        =========================================== -->
+
+        <section class="hero">
+
+            <div class="ojo-ia">
+
+                ◉
+
+            </div>
+
+
+            <h2>
+
+                Descubre el mundo
+
+                <span>
+                    prehistórico
+                </span>
+
+            </h2>
+
+
+            <p>
+
+                Pregunta sobre dinosaurios,
+                mamíferos prehistóricos,
+                reptiles marinos y cualquier
+                animal que haya habitado
+                nuestro planeta.
+
+            </p>
+
+        </section>
+
+
+
+        <!-- ==========================================
+             CHAT
+        =========================================== -->
+
+        <section class="chat">
+
+
+            <div id="conversacion">
+
+
+                <!-- MENSAJE INICIAL -->
+
+                <div class="mensaje ia">
+
+                    <div class="avatar">
+
+                        🦖
+
+                    </div>
+
+
+                    <div class="burbuja">
+
+                        <strong>
+                            PaleoIA
+                        </strong>
+
+
+                        <p>
+                            ¡Hola, explorador! 🌿
+                        </p>
+
+
+                        <p>
+
+                            Pregúntame lo que quieras
+                            sobre nuestros amigos
+                            prehistóricos.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ==========================================
+                 ENTRADA
+            =========================================== -->
+
+            <div class="entrada">
+
+                <input
+                    type="text"
+                    id="pregunta"
+                    placeholder="¿Qué quieres descubrir?"
+                    autocomplete="off"
+                >
+
+
+                <button
+                    id="botonPreguntar"
+                    aria-label="Enviar pregunta"
+                >
+
+                    ➤
+
+                </button>
+
+            </div>
+
+
+
+            <!-- ==========================================
+                 SUGERENCIAS
+            =========================================== -->
+
+            <div class="sugerencias">
+
+
+                <button>
+
+                    🦖 ¿Cuál fue el dinosaurio más grande?
+
+                </button>
+
+
+                <button>
+
+                    🌊 ¿Qué dinosaurios vivían en el mar?
+
+                </button>
+
+
+                <button>
+
+                    🦣 ¿Qué era un mamut?
+
+                </button>
+
+
+                <button>
+
+                    🦕 ¿Cuándo vivieron los dinosaurios?
+
+                </button>
+
+
+            </div>
+
+
+        </section>
+
+
+    </main>
+
+
+
+    <!-- ==========================================
+         FOOTER
+    =========================================== -->
+
+    <footer>
+
+        <p>
+
+            🌿 PaleoIA — Explorando la historia de la vida
+
+        </p>
+
+
+        <span>
+
+            Las respuestas deberán verificarse
+            con fuentes científicas.
+
+        </span>
+
+    </footer>
+
+
+
+    <!-- ==========================================
+         MODAL DE BORRADO
+    =========================================== -->
+
+    <div
+        id="modalBorrar"
+        class="modal-borrar"
+    >
+
+        <div class="modal-contenido">
+
+
+            <div
+                id="dinoBorrar"
+                class="dino-sorprendido"
+            >
+
+                😱🦖
+
+            </div>
+
+
+            <h2 id="tituloBorrar">
+
+                ¡¿Seguro que quieres borrar
+                esta conversación?!
+
+            </h2>
+
+
+            <p id="textoBorrar">
+
+                Esta aventura prehistórica
+                desaparecerá para siempre. 🥺
+
+            </p>
+
+
+            <div class="modal-botones">
+
+
+                <button id="cancelarBorrar">
+
+                    No, conservarla
+
+                </button>
+
+
+                <button id="confirmarBorrar">
+
+                    Sí, borrarla
+
+                </button>
+
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+
+    <script src="script.js"></script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,1210 @@
+ * {
+
+    margin: 0;
+
+    padding: 0;
+
+    box-sizing: border-box;
+
+}
+
+
+html {
+
+    scroll-behavior: smooth;
+
+}
+
+
+body {
+
+    font-family: Arial, sans-serif;
+
+    min-height: 100vh;
+
+    background:
+
+        linear-gradient(
+            rgba(20, 50, 30, 0.92),
+            rgba(45, 70, 35, 0.95)
+        );
+
+    color: #f5f0d8;
+
+    overflow-x: hidden;
+
+}
+
+
+
+/* ==========================================
+   ENCABEZADO
+========================================== */
+
+header {
+
+    height: 80px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 0 8%;
+
+    border-bottom:
+        1px solid rgba(255,255,255,0.15);
+
+    background:
+        rgba(20,40,25,0.65);
+
+    backdrop-filter: blur(10px);
+
+    position: relative;
+
+    z-index: 100;
+
+}
+
+
+.logo {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+}
+
+
+.logo-dino {
+
+    font-size: 40px;
+
+}
+
+
+.logo h1 {
+
+    font-size: 25px;
+
+    color: #b7d67c;
+
+}
+
+
+.logo span {
+
+    font-size: 12px;
+
+    opacity: .7;
+
+}
+
+
+.boton-info {
+
+    background: transparent;
+
+    border:
+        1px solid #b7d67c;
+
+    color: #b7d67c;
+
+    padding: 10px 18px;
+
+    border-radius: 20px;
+
+    cursor: pointer;
+
+    transition: .2s;
+
+}
+
+
+.boton-info:hover {
+
+    background:
+        rgba(183,214,124,.15);
+
+}
+
+
+
+/* ==========================================
+   BOTÓN MENÚ
+========================================== */
+
+.boton-menu {
+
+    display: none;
+
+    background: transparent;
+
+    border: none;
+
+    color: #b7d67c;
+
+    font-size: 30px;
+
+    cursor: pointer;
+
+    padding: 5px;
+
+}
+
+
+
+/* ==========================================
+   HOJAS
+========================================== */
+
+.hojas {
+
+    position: fixed;
+
+    font-size: 90px;
+
+    opacity: .15;
+
+    pointer-events: none;
+
+    z-index: 0;
+
+}
+
+
+.hojas-izquierda {
+
+    left: -20px;
+
+    top: 100px;
+
+}
+
+
+.hojas-derecha {
+
+    right: -20px;
+
+    bottom: 100px;
+
+    transform: scaleX(-1);
+
+}
+
+
+
+/* ==========================================
+   BARRA LATERAL
+========================================== */
+
+.barra-lateral {
+
+    position: fixed;
+
+    left: 0;
+
+    top: 80px;
+
+    bottom: 0;
+
+    width: 250px;
+
+    padding: 25px 18px;
+
+    background:
+        rgba(15,35,20,0.96);
+
+    border-right:
+        1px solid rgba(255,255,255,0.12);
+
+    backdrop-filter: blur(10px);
+
+    z-index: 90;
+
+    overflow-y: auto;
+
+    transition:
+        transform .3s ease;
+
+}
+
+
+.sidebar-logo {
+
+    font-size: 20px;
+
+    color: #b7d67c;
+
+    margin-bottom: 25px;
+
+}
+
+
+.nuevo-chat {
+
+    width: 100%;
+
+    padding: 12px 15px;
+
+    border:
+        1px solid rgba(183,214,124,0.4);
+
+    border-radius: 12px;
+
+    background:
+        rgba(183,214,124,0.12);
+
+    color: #f5f0d8;
+
+    font-size: 15px;
+
+    cursor: pointer;
+
+    transition: .2s;
+
+}
+
+
+.nuevo-chat:hover {
+
+    background:
+        rgba(183,214,124,0.22);
+
+}
+
+
+.historial {
+
+    margin-top: 30px;
+
+}
+
+
+.historial-titulo {
+
+    font-size: 12px;
+
+    text-transform: uppercase;
+
+    letter-spacing: 1px;
+
+    opacity: .5;
+
+    margin-bottom: 12px;
+
+}
+
+
+#listaConversaciones {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 6px;
+
+}
+
+
+#listaConversaciones button {
+
+    transition: .2s;
+
+}
+
+
+#listaConversaciones button:hover {
+
+    background:
+        rgba(183,214,124,.15) !important;
+
+}
+
+
+
+/* ==========================================
+   FONDO DEL MENÚ
+========================================== */
+
+.fondo-menu {
+
+    display: none;
+
+    position: fixed;
+
+    inset: 0;
+
+    background:
+        rgba(0,0,0,.55);
+
+    backdrop-filter: blur(2px);
+
+    z-index: 80;
+
+}
+
+
+.fondo-menu.activo {
+
+    display: block;
+
+}
+
+
+
+/* ==========================================
+   CONTENIDO
+========================================== */
+
+main {
+
+    max-width: 900px;
+
+    margin-left: 250px;
+
+    margin-right: auto;
+
+    padding: 70px 40px;
+
+    position: relative;
+
+    z-index: 1;
+
+}
+
+
+
+/* ==========================================
+   HERO
+========================================== */
+
+.hero {
+
+    text-align: center;
+
+}
+
+
+.ojo-ia {
+
+    width: 65px;
+
+    height: 65px;
+
+    margin: auto;
+
+    margin-bottom: 20px;
+
+    border-radius: 50%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 30px;
+
+    background: #243f25;
+
+    border:
+        2px solid #b7d67c;
+
+    box-shadow:
+        0 0 20px rgba(183,214,124,.4);
+
+}
+
+
+.hero h2 {
+
+    font-size: 45px;
+
+    margin-bottom: 20px;
+
+}
+
+
+.hero h2 span {
+
+    color: #b7d67c;
+
+}
+
+
+.hero p {
+
+    max-width: 650px;
+
+    margin: auto;
+
+    line-height: 1.7;
+
+    opacity: .8;
+
+}
+
+
+
+/* ==========================================
+   CHAT
+========================================== */
+
+.chat {
+
+    margin-top: 50px;
+
+}
+
+
+#conversacion {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 18px;
+
+}
+
+
+.mensaje {
+
+    display: flex;
+
+    gap: 12px;
+
+    width: 100%;
+
+}
+
+
+.mensaje.ia {
+
+    justify-content: flex-start;
+
+}
+
+
+.mensaje.usuario {
+
+    justify-content: flex-end;
+
+}
+
+
+.avatar {
+
+    width: 45px;
+
+    height: 45px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 27px;
+
+    background: #243f25;
+
+    border-radius: 50%;
+
+    flex-shrink: 0;
+
+}
+
+
+.burbuja {
+
+    background:
+        rgba(255,255,255,.08);
+
+    border:
+        1px solid rgba(255,255,255,.1);
+
+    padding: 18px;
+
+    border-radius: 15px;
+
+    max-width: 70%;
+
+    line-height: 1.6;
+
+    overflow-wrap: break-word;
+
+    word-wrap: break-word;
+
+}
+
+
+.burbuja strong {
+
+    color: #b7d67c;
+
+    display: block;
+
+    margin-bottom: 6px;
+
+}
+
+
+.burbuja p {
+
+    margin: 0;
+
+}
+
+
+.burbuja p + p {
+
+    margin-top: 8px;
+
+}
+
+
+.mensaje.usuario .burbuja {
+
+    background:
+        rgba(183,214,124,.18);
+
+    border:
+        1px solid rgba(183,214,124,.25);
+
+}
+
+
+
+/* ==========================================
+   ENTRADA
+========================================== */
+
+.entrada {
+
+    margin-top: 30px;
+
+    display: flex;
+
+    background:
+        rgba(255,255,255,.08);
+
+    border:
+        1px solid rgba(255,255,255,.15);
+
+    border-radius: 18px;
+
+    padding: 8px;
+
+}
+
+
+.entrada input {
+
+    flex: 1;
+
+    min-width: 0;
+
+    border: none;
+
+    outline: none;
+
+    background: transparent;
+
+    color: white;
+
+    padding: 15px;
+
+    font-size: 16px;
+
+}
+
+
+.entrada input::placeholder {
+
+    color:
+        rgba(255,255,255,.5);
+
+}
+
+
+.entrada button {
+
+    width: 50px;
+
+    min-width: 50px;
+
+    border: none;
+
+    border-radius: 13px;
+
+    background: #b7d67c;
+
+    cursor: pointer;
+
+    font-size: 20px;
+
+    transition: .2s;
+
+}
+
+
+.entrada button:hover {
+
+    transform: scale(1.05);
+
+}
+
+
+
+/* ==========================================
+   SUGERENCIAS
+========================================== */
+
+.sugerencias {
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 10px;
+
+    margin-top: 15px;
+
+}
+
+
+.sugerencias button {
+
+    background:
+        rgba(255,255,255,.07);
+
+    border:
+        1px solid rgba(255,255,255,.1);
+
+    color: white;
+
+    padding: 9px 13px;
+
+    border-radius: 20px;
+
+    cursor: pointer;
+
+    transition: .2s;
+
+}
+
+
+.sugerencias button:hover {
+
+    background:
+        rgba(183,214,124,.2);
+
+}
+
+
+
+/* ==========================================
+   FOOTER
+========================================== */
+
+footer {
+
+    text-align: center;
+
+    padding: 30px;
+
+    opacity: .6;
+
+    font-size: 12px;
+
+    margin-left: 250px;
+
+}
+
+
+footer span {
+
+    display: block;
+
+    margin-top: 5px;
+
+}
+
+
+
+/* ==========================================
+   MODAL BORRAR
+========================================== */
+
+.modal-borrar {
+
+    position: fixed;
+
+    inset: 0;
+
+    display: none;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background:
+        rgba(0,0,0,.65);
+
+    backdrop-filter: blur(6px);
+
+    z-index: 9999;
+
+    padding: 20px;
+
+}
+
+
+.modal-borrar.activo {
+
+    display: flex;
+
+}
+
+
+.modal-contenido {
+
+    width: 100%;
+
+    max-width: 430px;
+
+    padding: 30px;
+
+    text-align: center;
+
+    border-radius: 22px;
+
+    background:
+
+        linear-gradient(
+            145deg,
+            #243f25,
+            #162b1b
+        );
+
+    border:
+        1px solid rgba(183,214,124,.4);
+
+    box-shadow:
+        0 20px 60px rgba(0,0,0,.5);
+
+    animation:
+        aparecerModal .2s ease;
+
+}
+
+
+.dino-sorprendido {
+
+    font-size: 70px;
+
+    margin-bottom: 15px;
+
+}
+
+
+.modal-contenido h2 {
+
+    color: #b7d67c;
+
+    font-size: 23px;
+
+    margin-bottom: 12px;
+
+}
+
+
+.modal-contenido p {
+
+    color: #f5f0d8;
+
+    opacity: .75;
+
+    line-height: 1.6;
+
+    margin-bottom: 25px;
+
+}
+
+
+.modal-botones {
+
+    display: flex;
+
+    gap: 10px;
+
+    justify-content: center;
+
+}
+
+
+.modal-botones button {
+
+    padding: 11px 18px;
+
+    border-radius: 12px;
+
+    cursor: pointer;
+
+    font-size: 14px;
+
+}
+
+
+#cancelarBorrar {
+
+    background:
+        rgba(255,255,255,.08);
+
+    border:
+        1px solid rgba(255,255,255,.15);
+
+    color: #f5f0d8;
+
+}
+
+
+#confirmarBorrar {
+
+    background: #b7d67c;
+
+    border: none;
+
+    color: #18251a;
+
+    font-weight: bold;
+
+}
+
+
+#cancelarBorrar:hover {
+
+    background:
+        rgba(255,255,255,.15);
+
+}
+
+
+#confirmarBorrar:hover {
+
+    transform: scale(1.03);
+
+}
+
+
+@keyframes aparecerModal {
+
+    from {
+
+        opacity: 0;
+
+        transform: scale(.9);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform: scale(1);
+
+    }
+
+}
+
+
+
+/* ==========================================
+   CELULAR
+========================================== */
+
+@media(max-width: 700px) {
+
+
+    body {
+
+        min-width: 0;
+
+    }
+
+
+    header {
+
+        height: 70px;
+
+        padding: 0 18px;
+
+    }
+
+
+    .logo {
+
+        gap: 8px;
+
+    }
+
+
+    .logo-dino {
+
+        font-size: 32px;
+
+    }
+
+
+    .logo h1 {
+
+        font-size: 21px;
+
+    }
+
+
+    .logo span {
+
+        font-size: 10px;
+
+    }
+
+
+    .boton-info {
+
+        display: none;
+
+    }
+
+
+    .boton-menu {
+
+        display: block;
+
+    }
+
+
+    .barra-lateral {
+
+        top: 70px;
+
+        width: 280px;
+
+        transform: translateX(-100%);
+
+        box-shadow:
+            15px 0 35px rgba(0,0,0,.35);
+
+    }
+
+
+    .barra-lateral.activo {
+
+        transform: translateX(0);
+
+    }
+
+
+    main {
+
+        width: 100%;
+
+        max-width: none;
+
+        margin-left: 0;
+
+        padding:
+            45px 18px 35px;
+
+    }
+
+
+    footer {
+
+        margin-left: 0;
+
+        padding: 25px 18px;
+
+    }
+
+
+    .hero h2 {
+
+        font-size: 32px;
+
+        line-height: 1.2;
+
+    }
+
+
+    .hero p {
+
+        font-size: 14px;
+
+        line-height: 1.6;
+
+    }
+
+
+    .ojo-ia {
+
+        width: 55px;
+
+        height: 55px;
+
+        font-size: 25px;
+
+    }
+
+
+    .chat {
+
+        margin-top: 35px;
+
+    }
+
+
+    .mensaje {
+
+        gap: 8px;
+
+    }
+
+
+    .avatar {
+
+        width: 38px;
+
+        height: 38px;
+
+        font-size: 23px;
+
+    }
+
+
+    .burbuja {
+
+        max-width: calc(100% - 46px);
+
+        padding: 13px;
+
+        font-size: 14px;
+
+    }
+
+
+    .mensaje.usuario .burbuja {
+
+        max-width: 85%;
+
+    }
+
+
+    .entrada {
+
+        margin-top: 22px;
+
+        padding: 6px;
+
+        border-radius: 15px;
+
+    }
+
+
+    .entrada input {
+
+        padding: 12px 10px;
+
+        font-size: 15px;
+
+    }
+
+
+    .entrada button {
+
+        width: 44px;
+
+        min-width: 44px;
+
+        font-size: 18px;
+
+    }
+
+
+    .sugerencias {
+
+        gap: 7px;
+
+    }
+
+
+    .sugerencias button {
+
+        font-size: 12px;
+
+        padding: 8px 10px;
+
+    }
+
+
+    .modal-contenido {
+
+        max-width: 100%;
+
+        padding: 25px 20px;
+
+    }
+
+
+    .modal-contenido h2 {
+
+        font-size: 20px;
+
+    }
+
+
+    .dino-sorprendido {
+
+        font-size: 58px;
+
+    }
+
+
+}
+
+
+
+/* ==========================================
+   CELULARES MUY PEQUEÑOS
+========================================== */
+
+@media(max-width: 380px) {
+
+
+    .logo span {
+
+        display: none;
+
+    }
+
+
+    .hero h2 {
+
+        font-size: 28px;
+
+    }
+
+
+    .sugerencias button {
+
+        width: 100%;
+
+    }
+
+
+}
