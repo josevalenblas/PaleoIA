@@ -9,17 +9,14 @@ import time
 
 
 # ==========================================
-# VARIABLES DE ENTORNO
+# CARGAR VARIABLES DE ENTORNO
 # ==========================================
 
 load_dotenv()
 
-api_key = os.getenv("GEMINI_API_KEY")
-dev_password = os.getenv("PALEOIA_DEV_PASSWORD")
-
 
 # ==========================================
-# APLICACIÓN
+# CREAR APLICACIÓN
 # ==========================================
 
 app = FastAPI()
@@ -39,7 +36,15 @@ app.add_middleware(
 
 
 # ==========================================
-# GEMINI
+# VARIABLES DE ENTORNO
+# ==========================================
+
+api_key = os.getenv("GEMINI_API_KEY")
+dev_password = os.getenv("PALEOIA_DEV_PASSWORD")
+
+
+# ==========================================
+# CLIENTE GEMINI
 # ==========================================
 
 if api_key:
@@ -56,7 +61,7 @@ sesiones_desarrollador = set()
 
 
 # ==========================================
-# PALEOIA NORMAL
+# PERSONALIDAD NORMAL
 # ==========================================
 
 SYSTEM_PROMPT = """
@@ -97,40 +102,32 @@ dilo claramente.
 
 Explica los conceptos de forma sencilla
 pero científicamente correcta.
-
-Sé directo y evita respuestas
-innecesariamente largas.
 """
 
 
 # ==========================================
-# MODO DESARROLLADOR
+# PERSONALIDAD DESARROLLADOR
 # ==========================================
 
 DEVELOPER_PROMPT = """
 Eres PaleoIA en MODO DESARROLLADOR.
 
-El usuario está autenticado como
+El usuario ha sido autenticado como
 desarrollador.
 
 En este modo puedes responder preguntas
 sobre cualquier tema permitido y no estás
 limitado exclusivamente a paleontología.
 
+Mantén siempre una respuesta clara,
+útil y científicamente responsable.
+
 Responde siempre en español.
-
-Sé claro, directo y útil.
-
-Cuando una pregunta sea científica,
-diferencia entre hechos, estimaciones
-e hipótesis cuando sea necesario.
-
-No inventes fuentes ni información.
 """
 
 
 # ==========================================
-# LOGIN
+# MODELO PARA LOGIN
 # ==========================================
 
 class LoginRequest(BaseModel):
@@ -220,23 +217,32 @@ def preguntar(
     print(pregunta)
     print("================================")
 
+
     # ======================================
     # COMPROBAR API
     # ======================================
 
     if not api_key or client is None:
 
+        print("❌ GEMINI_API_KEY no encontrada")
+
         return {
             "pregunta": pregunta,
-            "respuesta": "❌ PaleoIA no tiene configurada su API."
+            "respuesta":
+                "❌ PaleoIA no tiene configurada "
+                "su API de investigación.",
+            "modo_desarrollador": False
         }
 
 
     # ======================================
-    # COMPROBAR MODO
+    # COMPROBAR MODO DESARROLLADOR
     # ======================================
 
-    modo_desarrollador = token in sesiones_desarrollador
+    modo_desarrollador = (
+        token != ""
+        and token in sesiones_desarrollador
+    )
 
 
     if modo_desarrollador:
@@ -261,33 +267,50 @@ def preguntar(
 
 
     # ======================================
-    # GEMINI
+    # CONSULTAR GEMINI
     # ======================================
 
-    for intento in range(3):
+    max_intentos = 3
+
+    for intento in range(1, max_intentos + 1):
 
         try:
 
             print(
                 f"🧠 Consultando Gemini "
-                f"(intento {intento + 1}/3)..."
+                f"(intento {intento}/{max_intentos})..."
             )
+
 
             respuesta = client.models.generate_content(
 
-                model="gemini-2.5-flash",
+                # MODELO ACTUAL
+                model="gemini-3.6-flash",
 
                 contents=prompt
             )
 
+
             texto = respuesta.text
 
-            print("✅ Respuesta recibida")
+
+            if not texto:
+
+                raise Exception(
+                    "Gemini devolvió una respuesta vacía."
+                )
+
+
+            print(
+                "✅ Respuesta recibida correctamente"
+            )
+
 
             return {
                 "pregunta": pregunta,
                 "respuesta": texto,
-                "modo_desarrollador": modo_desarrollador
+                "modo_desarrollador":
+                    modo_desarrollador
             }
 
 
@@ -300,44 +323,48 @@ def preguntar(
 
 
             # ==================================
-            # REINTENTAR SI GEMINI ESTÁ OCUPADO
+            # SI ES UN ERROR TEMPORAL
             # ==================================
 
-            if "503" in error_texto or "UNAVAILABLE" in error_texto:
+            if (
+                "503" in error_texto
+                or "UNAVAILABLE" in error_texto
+                or "429" in error_texto
+                or "RESOURCE_EXHAUSTED" in error_texto
+            ):
 
-                if intento < 2:
+                if intento < max_intentos:
 
-                    print("⏳ Gemini está ocupado. Reintentando...")
+                    print(
+                        "⏳ Reintentando..."
+                    )
 
                     time.sleep(1)
 
                     continue
 
-                return {
-                    "pregunta": pregunta,
-                    "respuesta":
-                        "⚠️ Gemini está recibiendo muchas "
-                        "solicitudes en este momento. "
-                        "Intenta nuevamente en unos segundos.",
-                    "modo_desarrollador": modo_desarrollador
-                }
-
 
             # ==================================
-            # OTROS ERRORES
+            # ERROR DEFINITIVO
             # ==================================
 
             return {
                 "pregunta": pregunta,
                 "respuesta":
-                    "❌ Ocurrió un error al consultar "
-                    "el cerebro de PaleoIA.",
-                "modo_desarrollador": modo_desarrollador
+                    "❌ Ocurrió un error al "
+                    "consultar el cerebro de PaleoIA.\n\n"
+                    "Detalle: "
+                    + error_texto,
+                "modo_desarrollador":
+                    modo_desarrollador
             }
 
 
     return {
         "pregunta": pregunta,
-        "respuesta": "❌ No se pudo obtener una respuesta.",
-        "modo_desarrollador": modo_desarrollador
+        "respuesta":
+            "❌ PaleoIA no pudo obtener "
+            "una respuesta.",
+        "modo_desarrollador":
+            modo_desarrollador
     }
