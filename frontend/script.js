@@ -1,12 +1,21 @@
+/* =====================================================
+   PALEOIA
+   SCRIPT PRINCIPAL
+===================================================== */
+
+
 const BACKEND_URL =
     "https://paleoia-backend.onrender.com";
 
+
+/* =====================================================
+   ESTADO
+===================================================== */
 
 let conversationId =
     localStorage.getItem(
         "paleoia_conversation_id"
     ) || "";
-
 
 let developerToken =
     localStorage.getItem(
@@ -14,112 +23,148 @@ let developerToken =
     ) || "";
 
 
-const preguntaInput =
-    document.getElementById("pregunta");
+/* =====================================================
+   ELEMENTOS
+===================================================== */
 
+const preguntaInput =
+    document.getElementById(
+        "pregunta"
+    );
 
 const botonPreguntar =
     document.getElementById(
         "botonPreguntar"
     );
 
-
 const conversacion =
     document.getElementById(
         "conversacion"
     );
-
 
 const botonMenu =
     document.getElementById(
         "botonMenu"
     );
 
-
 const barraLateral =
     document.getElementById(
         "barraLateral"
     );
-
 
 const fondoMenu =
     document.getElementById(
         "fondoMenu"
     );
 
-
 const nuevoChat =
     document.getElementById(
         "nuevoChat"
     );
 
+const listaConversaciones =
+    document.getElementById(
+        "listaConversaciones"
+    );
+
 
 /* =====================================================
-   CREAR CONVERSACIÓN
+   ICONO DE PALEOIA
 ===================================================== */
 
-async function crearNuevaConversacion() {
+function crearIconoPaleoIA() {
 
-    try {
-
-        const respuesta =
-            await fetch(
-                `${BACKEND_URL}/nueva-conversacion`
-            );
-
-
-        if (!respuesta.ok) {
-
-            throw new Error(
-                "No se pudo crear la conversación."
-            );
-
-        }
-
-
-        const datos =
-            await respuesta.json();
-
-
-        conversationId =
-            datos.conversation_id;
-
-
-        localStorage.setItem(
-            "paleoia_conversation_id",
-            conversationId
-        );
-
-
-    } catch (error) {
-
-        console.error(error);
-
-
-        if (
-            window.crypto &&
-            crypto.randomUUID
-        ) {
-
-            conversationId =
-                crypto.randomUUID();
-
-        } else {
-
-            conversationId =
-                Date.now().toString();
-
-        }
-
-
-        localStorage.setItem(
-            "paleoia_conversation_id",
-            conversationId
-        );
-
+    if (
+        document.querySelector(
+            'link[rel="icon"]'
+        )
+    ) {
+        return;
     }
 
+    const canvas =
+        document.createElement(
+            "canvas"
+        );
+
+    canvas.width = 64;
+    canvas.height = 64;
+
+    const contexto =
+        canvas.getContext("2d");
+
+
+    /* Fondo */
+
+    contexto.fillStyle =
+        "#243f25";
+
+    contexto.fillRect(
+        0,
+        0,
+        64,
+        64
+    );
+
+
+    /* Círculo */
+
+    contexto.beginPath();
+
+    contexto.arc(
+        32,
+        32,
+        26,
+        0,
+        Math.PI * 2
+    );
+
+    contexto.fillStyle =
+        "#b7d67c";
+
+    contexto.fill();
+
+
+    /* Dino */
+
+    contexto.font =
+        "32px Arial";
+
+    contexto.textAlign =
+        "center";
+
+    contexto.textBaseline =
+        "middle";
+
+    contexto.fillText(
+        "🦖",
+        32,
+        33
+    );
+
+
+    const icono =
+        document.createElement(
+            "link"
+        );
+
+    icono.rel = "icon";
+
+    icono.type =
+        "image/png";
+
+    icono.href =
+        canvas.toDataURL(
+            "image/png"
+        );
+
+    document.head.appendChild(
+        icono
+    );
 }
+
+
+crearIconoPaleoIA();
 
 
 /* =====================================================
@@ -129,74 +174,14 @@ async function crearNuevaConversacion() {
 function escaparHTML(texto) {
 
     const div =
-        document.createElement("div");
-
+        document.createElement(
+            "div"
+        );
 
     div.textContent =
-        String(texto ?? "");
-
+        texto ?? "";
 
     return div.innerHTML;
-
-}
-
-
-/* =====================================================
-   LIMPIAR RESPUESTA DE GEMINI
-===================================================== */
-
-function limpiarRespuesta(texto) {
-
-    if (!texto) {
-        return "";
-    }
-
-
-    texto = String(texto);
-
-
-    /*
-       Elimina bloques de código Markdown
-       como:
-
-       ```html
-       contenido
-       ```
-
-       pero conserva el contenido.
-    */
-
-    texto = texto.replace(
-        /```(?:html|javascript|js|css|markdown|text)?/gi,
-        ""
-    );
-
-
-    texto = texto.replace(
-        /```/g,
-        ""
-    );
-
-
-    /*
-       Elimina etiquetas HTML que Gemini
-       pueda devolver accidentalmente.
-    */
-
-    texto = texto.replace(
-        /<!DOCTYPE[^>]*>/gi,
-        ""
-    );
-
-
-    texto = texto.replace(
-        /<\/?(html|head|body)[^>]*>/gi,
-        ""
-    );
-
-
-    return texto.trim();
-
 }
 
 
@@ -204,53 +189,185 @@ function limpiarRespuesta(texto) {
    FORMATEAR RESPUESTA
 ===================================================== */
 
-function formatearRespuesta(texto) {
+function formatearRespuesta(
+    texto
+) {
+
+    if (!texto) {
+        return "";
+    }
+
 
     texto =
-        limpiarRespuesta(texto);
+        String(texto);
 
+
+    /*
+       Eliminar bloques Markdown
+       de código.
+    */
+
+    texto =
+        texto.replace(
+            /```html/gi,
+            ""
+        );
+
+    texto =
+        texto.replace(
+            /```javascript/gi,
+            ""
+        );
+
+    texto =
+        texto.replace(
+            /```typescript/gi,
+            ""
+        );
+
+    texto =
+        texto.replace(
+            /```python/gi,
+            ""
+        );
+
+    texto =
+        texto.replace(
+            /```json/gi,
+            ""
+        );
+
+    texto =
+        texto.replace(
+            /```css/gi,
+            ""
+        );
+
+    texto =
+        texto.replace(
+            /```js/gi,
+            ""
+        );
+
+    texto =
+        texto.replace(
+            /```markdown/gi,
+            ""
+        );
+
+    texto =
+        texto.replace(
+            /```text/gi,
+            ""
+        );
+
+    texto =
+        texto.replace(
+            /```/g,
+            ""
+        );
+
+
+    /*
+       Eliminar etiquetas HTML
+       que puedan llegar por error.
+    */
+
+    texto =
+        texto.replace(
+            /<html[^>]*>/gi,
+            ""
+        );
+
+    texto =
+        texto.replace(
+            /<\/html>/gi,
+            ""
+        );
+
+    texto =
+        texto.replace(
+            /<head[^>]*>[\s\S]*?<\/head>/gi,
+            ""
+        );
+
+    texto =
+        texto.replace(
+            /<body[^>]*>/gi,
+            ""
+        );
+
+    texto =
+        texto.replace(
+            /<\/body>/gi,
+            ""
+        );
+
+
+    /*
+       Escapar HTML.
+    */
 
     texto =
         escaparHTML(texto);
 
 
     /*
-       Negritas
+       Negritas.
     */
 
-    texto = texto.replace(
-        /\*\*(.*?)\*\*/g,
-        "<strong>$1</strong>"
-    );
+    texto =
+        texto.replace(
+            /\*\*(.*?)\*\*/g,
+            "<strong>$1</strong>"
+        );
 
 
     /*
-       Cursivas
+       Cursivas.
     */
 
-    texto = texto.replace(
-        /(?<!\*)\*([^*]+)\*(?!\*)/g,
-        "<em>$1</em>"
-    );
+    texto =
+        texto.replace(
+            /\*(.*?)\*/g,
+            "<em>$1</em>"
+        );
 
 
     /*
-       Saltos de línea
+       Saltos de línea.
     */
 
-    texto = texto.replace(
-        /\n/g,
-        "<br>"
-    );
+    texto =
+        texto.replace(
+            /\n/g,
+            "<br>"
+        );
 
 
     return texto;
-
 }
 
 
 /* =====================================================
-   AGREGAR MENSAJE DEL USUARIO
+   SCROLL DEL CHAT
+===================================================== */
+
+function desplazarChatAbajo() {
+
+    requestAnimationFrame(
+        () => {
+
+            conversacion.scrollTop =
+                conversacion.scrollHeight;
+
+        }
+    );
+}
+
+
+/* =====================================================
+   CREAR MENSAJE USUARIO
 ===================================================== */
 
 function agregarMensajeUsuario(
@@ -258,8 +375,9 @@ function agregarMensajeUsuario(
 ) {
 
     const mensaje =
-        document.createElement("div");
-
+        document.createElement(
+            "div"
+        );
 
     mensaje.className =
         "mensaje usuario";
@@ -283,18 +401,21 @@ function agregarMensajeUsuario(
 
     desplazarChatAbajo();
 
+
+    return mensaje;
 }
 
 
 /* =====================================================
-   CREAR RESPUESTA DE PALEOIA
+   CREAR MENSAJE IA
 ===================================================== */
 
 function crearMensajeIA() {
 
     const mensaje =
-        document.createElement("div");
-
+        document.createElement(
+            "div"
+        );
 
     mensaje.className =
         "mensaje ia";
@@ -332,30 +453,361 @@ function crearMensajeIA() {
     return mensaje.querySelector(
         ".respuesta-stream"
     );
-
 }
 
 
 /* =====================================================
-   SCROLL DEL CHAT
+   MENSAJE DE BIENVENIDA
 ===================================================== */
 
-function desplazarChatAbajo() {
+function mostrarBienvenida() {
 
-    requestAnimationFrame(
-        () => {
+    conversacion.innerHTML = `
 
-            conversacion.scrollTop =
-                conversacion.scrollHeight;
+        <div class="mensaje ia">
 
-        }
-    );
+            <div class="avatar">
+                🦖
+            </div>
 
+            <div class="burbuja">
+
+                <strong>
+                    PaleoIA
+                </strong>
+
+                <p>
+                    ¡Hola, explorador! 🌿
+                </p>
+
+                <p>
+                    Pregúntame lo que quieras
+                    sobre dinosaurios y vida
+                    prehistórica.
+                </p>
+
+            </div>
+
+        </div>
+
+    `;
 }
 
 
 /* =====================================================
-   PREGUNTAR
+   CARGAR HISTORIAL
+===================================================== */
+
+async function cargarHistorial(
+    id
+) {
+
+    if (!id) {
+        return false;
+    }
+
+
+    try {
+
+        const respuesta =
+            await fetch(
+                `${BACKEND_URL}/conversacion/${encodeURIComponent(id)}`
+            );
+
+
+        if (!respuesta.ok) {
+
+            return false;
+
+        }
+
+
+        const datos =
+            await respuesta.json();
+
+
+        if (
+            !datos.exito
+            ||
+            !Array.isArray(
+                datos.mensajes
+            )
+        ) {
+
+            return false;
+
+        }
+
+
+        conversacion.innerHTML =
+            "";
+
+
+        if (
+            datos.mensajes.length === 0
+        ) {
+
+            mostrarBienvenida();
+
+            return true;
+
+        }
+
+
+        for (
+            const mensaje
+            of datos.mensajes
+        ) {
+
+            if (
+                mensaje.rol ===
+                "usuario"
+            ) {
+
+                agregarMensajeUsuario(
+                    mensaje.contenido
+                );
+
+            } else {
+
+                const elemento =
+                    crearMensajeIA();
+
+                elemento.innerHTML =
+                    formatearRespuesta(
+                        mensaje.contenido
+                    );
+
+            }
+
+        }
+
+
+        desplazarChatAbajo();
+
+
+        return true;
+
+
+    } catch (error) {
+
+        console.error(
+            "Error cargando historial:",
+            error
+        );
+
+        return false;
+
+    }
+}
+
+
+/* =====================================================
+   CREAR NUEVA CONVERSACIÓN
+===================================================== */
+
+async function crearNuevaConversacion() {
+
+    try {
+
+        const respuesta =
+            await fetch(
+                `${BACKEND_URL}/nueva-conversacion`
+            );
+
+
+        const datos =
+            await respuesta.json();
+
+
+        if (
+            datos.exito
+            &&
+            datos.conversation_id
+        ) {
+
+            conversationId =
+                datos.conversation_id;
+
+
+            localStorage.setItem(
+                "paleoia_conversation_id",
+                conversationId
+            );
+
+
+            return true;
+
+        }
+
+
+    } catch (error) {
+
+        console.error(
+            "Error creando conversación:",
+            error
+        );
+
+    }
+
+
+    return false;
+}
+
+
+/* =====================================================
+   CARGAR LISTA DE CONVERSACIONES
+===================================================== */
+
+async function cargarListaConversaciones() {
+
+    if (!listaConversaciones) {
+        return;
+    }
+
+
+    try {
+
+        const respuesta =
+            await fetch(
+                `${BACKEND_URL}/conversaciones`
+            );
+
+
+        if (!respuesta.ok) {
+            return;
+        }
+
+
+        const datos =
+            await respuesta.json();
+
+
+        if (
+            !datos.exito
+            ||
+            !Array.isArray(
+                datos.conversaciones
+            )
+        ) {
+
+            return;
+
+        }
+
+
+        listaConversaciones.innerHTML =
+            "";
+
+
+        for (
+            const conversacionItem
+            of datos.conversaciones
+        ) {
+
+            const boton =
+                document.createElement(
+                    "button"
+                );
+
+
+            boton.type =
+                "button";
+
+
+            boton.textContent =
+                conversacionItem.titulo
+                ||
+                "Nueva conversación";
+
+
+            boton.dataset.id =
+                conversacionItem.id;
+
+
+            boton.style.width =
+                "100%";
+
+            boton.style.padding =
+                "10px";
+
+            boton.style.border =
+                "1px solid rgba(255,255,255,.08)";
+
+            boton.style.borderRadius =
+                "10px";
+
+            boton.style.background =
+                "rgba(255,255,255,.04)";
+
+            boton.style.color =
+                "#f5f0d8";
+
+            boton.style.textAlign =
+                "left";
+
+            boton.style.cursor =
+                "pointer";
+
+
+            if (
+                conversacionItem.id ===
+                conversationId
+            ) {
+
+                boton.style.background =
+                    "rgba(183,214,124,.16)";
+
+            }
+
+
+            boton.addEventListener(
+                "click",
+                async function() {
+
+                    conversationId =
+                        this.dataset.id;
+
+
+                    localStorage.setItem(
+                        "paleoia_conversation_id",
+                        conversationId
+                    );
+
+
+                    await cargarHistorial(
+                        conversationId
+                    );
+
+
+                    cerrarMenu();
+
+                    await cargarListaConversaciones();
+
+                }
+            );
+
+
+            listaConversaciones.appendChild(
+                boton
+            );
+
+        }
+
+
+    } catch (error) {
+
+        console.error(
+            "Error cargando conversaciones:",
+            error
+        );
+
+    }
+}
+
+
+/* =====================================================
+   PREGUNTAR CON STREAMING
 ===================================================== */
 
 async function preguntar() {
@@ -369,9 +821,15 @@ async function preguntar() {
     }
 
 
+    if (
+        botonPreguntar.disabled
+    ) {
+        return;
+    }
+
+
     botonPreguntar.disabled =
         true;
-
 
     preguntaInput.disabled =
         true;
@@ -382,20 +840,12 @@ async function preguntar() {
     );
 
 
-    preguntaInput.value = "";
+    preguntaInput.value =
+        "";
 
 
     const respuestaElemento =
         crearMensajeIA();
-
-
-    /*
-       Indicador mientras comienza
-       la respuesta.
-    */
-
-    respuestaElemento.innerHTML =
-        "🧠 Pensando...";
 
 
     try {
@@ -449,16 +899,8 @@ async function preguntar() {
             );
 
 
-        let buffer = "";
-
-
-        /*
-           Quitamos el "Pensando..."
-           cuando llega el primer texto.
-        */
-
-        let comenzoRespuesta =
-            false;
+        let buffer =
+            "";
 
 
         while (true) {
@@ -467,14 +909,21 @@ async function preguntar() {
                 await reader.read();
 
 
-            if (resultado.done) {
+            const value =
+                resultado.value;
+
+            const done =
+                resultado.done;
+
+
+            if (done) {
                 break;
             }
 
 
             buffer +=
                 decoder.decode(
-                    resultado.value,
+                    value,
                     {
                         stream: true
                     }
@@ -482,7 +931,9 @@ async function preguntar() {
 
 
             const lineas =
-                buffer.split("\n");
+                buffer.split(
+                    "\n"
+                );
 
 
             buffer =
@@ -490,11 +941,16 @@ async function preguntar() {
 
 
             for (
-                const linea of lineas
+                const linea
+                of lineas
             ) {
 
-                if (!linea.trim()) {
+                if (
+                    !linea.trim()
+                ) {
+
                     continue;
+
                 }
 
 
@@ -506,27 +962,17 @@ async function preguntar() {
                         );
 
 
-                    /*
-                       TEXTO
-                    */
-
                     if (
                         datos.tipo ===
                         "texto"
                     ) {
 
-                        if (
-                            !comenzoRespuesta
-                        ) {
-
-                            respuestaElemento.innerHTML =
-                                "";
-
-                            comenzoRespuesta =
-                                true;
-
-                        }
-
+                        /*
+                           Añadimos el texto
+                           recibido sin
+                           reemplazar lo
+                           anterior.
+                        */
 
                         respuestaElemento.innerHTML +=
                             formatearRespuesta(
@@ -538,10 +984,6 @@ async function preguntar() {
 
                     }
 
-
-                    /*
-                       FINAL
-                    */
 
                     if (
                         datos.tipo ===
@@ -563,36 +1005,41 @@ async function preguntar() {
 
                         }
 
+
+                        /*
+                           Actualizar historial
+                           lateral.
+                        */
+
+                        cargarListaConversaciones();
+
                     }
 
-
-                    /*
-                       ERROR
-                    */
 
                     if (
                         datos.tipo ===
                         "error"
                     ) {
 
-                        respuestaElemento.innerHTML = `
+                        respuestaElemento.innerHTML =
+                            `
+                            <span class="error-paleoia">
 
-                            <span
-                                class="error-paleoia"
-                            >
                                 ${escaparHTML(
-                                    datos.mensaje
+                                    datos.mensaje ||
+                                    "Ocurrió un error."
                                 )}
-                            </span>
 
-                        `;
+                            </span>
+                            `;
 
                     }
+
 
                 } catch (error) {
 
                     console.warn(
-                        "Datos no válidos:",
+                        "Respuesta no válida:",
                         linea
                     );
 
@@ -606,27 +1053,26 @@ async function preguntar() {
     } catch (error) {
 
         console.error(
-            "Error:",
+            "Error preguntando:",
             error
         );
 
 
-        respuestaElemento.innerHTML = `
+        respuestaElemento.innerHTML =
+            `
+            <span class="error-paleoia">
 
-            <span
-                class="error-paleoia"
-            >
-                ❌ No se pudo conectar con PaleoIA.
+                ❌ No se pudo conectar
+                con PaleoIA.
+
             </span>
-
-        `;
+            `;
 
     }
 
 
     botonPreguntar.disabled =
         false;
-
 
     preguntaInput.disabled =
         false;
@@ -637,6 +1083,13 @@ async function preguntar() {
 
     desplazarChatAbajo();
 
+
+    /*
+       Actualizar lista por si
+       cambió el título.
+    */
+
+    cargarListaConversaciones();
 }
 
 
@@ -644,33 +1097,43 @@ async function preguntar() {
    ENTER
 ===================================================== */
 
-preguntaInput.addEventListener(
-    "keydown",
-    (evento) => {
+if (preguntaInput) {
 
-        if (
-            evento.key === "Enter" &&
-            !evento.shiftKey
-        ) {
+    preguntaInput.addEventListener(
+        "keydown",
+        function(evento) {
 
-            evento.preventDefault();
+            if (
+                evento.key ===
+                "Enter"
+                &&
+                !evento.shiftKey
+            ) {
 
-            preguntar();
+                evento.preventDefault();
+
+                preguntar();
+
+            }
 
         }
+    );
 
-    }
-);
+}
 
 
 /* =====================================================
    BOTÓN ENVIAR
 ===================================================== */
 
-botonPreguntar.addEventListener(
-    "click",
-    preguntar
-);
+if (botonPreguntar) {
+
+    botonPreguntar.addEventListener(
+        "click",
+        preguntar
+    );
+
+}
 
 
 /* =====================================================
@@ -682,15 +1145,14 @@ document
         ".sugerencias button"
     )
     .forEach(
-        (boton) => {
+        boton => {
 
             boton.addEventListener(
                 "click",
-                () => {
+                function() {
 
                     preguntaInput.value =
-                        boton.textContent.trim();
-
+                        this.textContent.trim();
 
                     preguntar();
 
@@ -707,28 +1169,46 @@ document
 
 function abrirMenu() {
 
-    barraLateral.classList.add(
-        "activo"
-    );
+    if (barraLateral) {
+
+        barraLateral.classList.add(
+            "activo"
+        );
+
+    }
 
 
-    fondoMenu.classList.add(
-        "activo"
-    );
+    if (fondoMenu) {
 
+        fondoMenu.classList.add(
+            "activo"
+        );
+
+    }
+
+
+    cargarListaConversaciones();
 }
 
 
 function cerrarMenu() {
 
-    barraLateral.classList.remove(
-        "activo"
-    );
+    if (barraLateral) {
+
+        barraLateral.classList.remove(
+            "activo"
+        );
+
+    }
 
 
-    fondoMenu.classList.remove(
-        "activo"
-    );
+    if (fondoMenu) {
+
+        fondoMenu.classList.remove(
+            "activo"
+        );
+
+    }
 
 }
 
@@ -761,41 +1241,29 @@ if (nuevoChat) {
 
     nuevoChat.addEventListener(
         "click",
-        async () => {
+        async function() {
 
-            conversacion.innerHTML = `
-
-                <div class="mensaje ia">
-
-                    <div class="avatar">
-                        🦖
-                    </div>
-
-                    <div class="burbuja">
-
-                        <strong>
-                            PaleoIA
-                        </strong>
-
-                        <p>
-                            ¡Nueva aventura prehistórica! 🌿
-                        </p>
-
-                        <p>
-                            ¿Qué quieres descubrir?
-                        </p>
-
-                    </div>
-
-                </div>
-
-            `;
+            const creado =
+                await crearNuevaConversacion();
 
 
-            await crearNuevaConversacion();
+            if (!creado) {
+
+                return;
+
+            }
+
+
+            mostrarBienvenida();
 
 
             cerrarMenu();
+
+
+            await cargarListaConversaciones();
+
+
+            preguntaInput.focus();
 
         }
     );
@@ -809,9 +1277,50 @@ if (nuevoChat) {
 
 async function iniciarPaleoIA() {
 
-    if (!conversationId) {
+    /*
+       Si existe una conversación
+       guardada, cargarla.
+    */
+
+    if (conversationId) {
+
+        const cargado =
+            await cargarHistorial(
+                conversationId
+            );
+
+
+        if (!cargado) {
+
+            await crearNuevaConversacion();
+
+            mostrarBienvenida();
+
+        }
+
+    } else {
 
         await crearNuevaConversacion();
+
+        mostrarBienvenida();
+
+    }
+
+
+    /*
+       Cargar historial lateral.
+    */
+
+    await cargarListaConversaciones();
+
+
+    /*
+       Dejar cursor listo.
+    */
+
+    if (preguntaInput) {
+
+        preguntaInput.focus();
 
     }
 
