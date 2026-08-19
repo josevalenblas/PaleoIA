@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from dotenv import load_dotenv
@@ -14,13 +14,21 @@ from datetime import datetime
 
 
 # =========================================================
-# PALEOIA
-# BACKEND PRINCIPAL
+# CONFIGURACIÓN
 # =========================================================
 
 load_dotenv()
 
 app = FastAPI(title="PaleoIA Backend")
+
+API_KEY = os.getenv("GEMINI_API_KEY")
+DEV_PASSWORD = os.getenv("PALEOIA_DEV_PASSWORD")
+
+MODEL_NAME = "gemini-3.6-flash"
+
+DB_FILE = "paleoia.db"
+
+MAX_MENSAJES_MEMORIA = 12
 
 
 # =========================================================
@@ -37,31 +45,17 @@ app.add_middleware(
 
 
 # =========================================================
-# CONFIGURACIÓN
-# =========================================================
-
-API_KEY = os.getenv("GEMINI_API_KEY")
-DEV_PASSWORD = os.getenv("PALEOIA_DEV_PASSWORD")
-
-MODEL_NAME = "gemini-3.6-flash"
-
-DB_FILE = "paleoia.db"
-
-MAX_MENSAJES_MEMORIA = 12
-
-
-# =========================================================
 # CLIENTE GEMINI
 # =========================================================
 
+client = None
+
 if API_KEY:
     client = genai.Client(api_key=API_KEY)
-else:
-    client = None
 
 
 # =========================================================
-# SESIONES DESARROLLADOR
+# SESIONES DE DESARROLLADOR
 # =========================================================
 
 sesiones_desarrollador = set()
@@ -72,7 +66,6 @@ sesiones_desarrollador = set()
 # =========================================================
 
 def conectar_db():
-
     conexion = sqlite3.connect(
         DB_FILE,
         check_same_thread=False
@@ -107,11 +100,31 @@ def inicializar_db():
         )
     """)
 
+    cursor.execute("""
+        CREATE INDEX IF NOT EXISTS
+        idx_mensajes_conversation
+        ON mensajes(conversation_id, id)
+    """)
+
+    cursor.execute("""
+        CREATE INDEX IF NOT EXISTS
+        idx_conversaciones_actualizada
+        ON conversaciones(actualizada)
+    """)
+
     conexion.commit()
     conexion.close()
 
 
 inicializar_db()
+
+
+# =========================================================
+# FECHA
+# =========================================================
+
+def ahora():
+    return datetime.utcnow().isoformat()
 
 
 # =========================================================
@@ -122,7 +135,7 @@ def crear_conversacion_db():
 
     conversation_id = str(uuid.uuid4())
 
-    ahora = datetime.utcnow().isoformat()
+    fecha = ahora()
 
     conexion = conectar_db()
 
@@ -134,8 +147,8 @@ def crear_conversacion_db():
         """,
         (
             conversation_id,
-            ahora,
-            ahora
+            fecha,
+            fecha
         )
     )
 
@@ -172,29 +185,24 @@ def guardar_mensaje(
     contenido
 ):
 
-    if not conversation_id:
+    if not contenido:
         return
 
-    ahora = datetime.utcnow().isoformat()
+    fecha = ahora()
 
     conexion = conectar_db()
 
     conexion.execute(
         """
         INSERT INTO mensajes
-        (
-            conversation_id,
-            rol,
-            contenido,
-            fecha
-        )
+        (conversation_id, rol, contenido, fecha)
         VALUES (?, ?, ?, ?)
         """,
         (
             conversation_id,
             rol,
             contenido,
-            ahora
+            fecha
         )
     )
 
@@ -205,7 +213,7 @@ def guardar_mensaje(
         WHERE id = ?
         """,
         (
-            ahora,
+            fecha,
             conversation_id
         )
     )
@@ -219,16 +227,11 @@ def obtener_historial(
     limite=MAX_MENSAJES_MEMORIA
 ):
 
-    if not conversation_id:
-        return []
-
     conexion = conectar_db()
 
-    mensajes = conexion.execute(
+    filas = conexion.execute(
         """
-        SELECT
-            rol,
-            contenido
+        SELECT rol, contenido
         FROM mensajes
         WHERE conversation_id = ?
         ORDER BY id DESC
@@ -242,14 +245,14 @@ def obtener_historial(
 
     conexion.close()
 
-    mensajes = list(reversed(mensajes))
+    filas = list(reversed(filas))
 
     return [
         {
-            "rol": mensaje["rol"],
-            "contenido": mensaje["contenido"]
+            "rol": fila["rol"],
+            "contenido": fila["contenido"]
         }
-        for mensaje in mensajes
+        for fila in filas
     ]
 
 
@@ -257,14 +260,12 @@ def obtener_todos_los_mensajes(
     conversation_id
 ):
 
-    if not conversation_id:
-        return []
-
     conexion = conectar_db()
 
-    mensajes = conexion.execute(
+    filas = conexion.execute(
         """
         SELECT
+            id,
             rol,
             contenido,
             fecha
@@ -279,20 +280,18 @@ def obtener_todos_los_mensajes(
 
     return [
         {
-            "rol": mensaje["rol"],
-            "contenido": mensaje["contenido"],
-            "fecha": mensaje["fecha"]
+            "id": fila["id"],
+            "rol": fila["rol"],
+            "contenido": fila["contenido"],
+            "fecha": fila["fecha"]
         }
-        for mensaje in mensajes
+        for fila in filas
     ]
 
 
 def eliminar_conversacion_db(
     conversation_id
 ):
-
-    if not conversation_id:
-        return
 
     conexion = conectar_db()
 
@@ -304,7 +303,7 @@ def eliminar_conversacion_db(
         (conversation_id,)
     )
 
-    conexion.execute(
+    resultado = conexion.execute(
         """
         DELETE FROM conversaciones
         WHERE id = ?
@@ -315,9 +314,11 @@ def eliminar_conversacion_db(
     conexion.commit()
     conexion.close()
 
+    return resultado.rowcount > 0
+
 
 # =========================================================
-# PERSONALIDAD PALEOIA
+# PERSONALIDAD
 # =========================================================
 
 SYSTEM_PROMPT = """
@@ -327,7 +328,7 @@ prehistóricos.
 
 Responde siempre en español.
 
-Tu especialidad incluye:
+Especialidad:
 
 - Dinosaurios
 - Pterosaurios
@@ -358,7 +359,7 @@ Responde de forma directa.
 
 No repitas innecesariamente la pregunta.
 
-MANTÉN EL CONTEXTO DE LA CONVERSACIÓN.
+MANTÉN EL CONTEXTO.
 
 Si el usuario utiliza palabras como:
 
@@ -382,17 +383,10 @@ anterior.
 
 No reinicies la conversación.
 
-No preguntes nuevamente de qué está hablando
-si el contexto permite saberlo.
-
-Si la pregunta es sencilla, responde de forma
-sencilla y rápida.
+Si la pregunta es sencilla,
+responde de forma sencilla.
 """
 
-
-# =========================================================
-# PERSONALIDAD DESARROLLADOR
-# =========================================================
 
 DEVELOPER_PROMPT = """
 Eres PaleoIA en MODO DESARROLLADOR.
@@ -406,12 +400,10 @@ Responde siempre en español.
 
 Sé claro, directo y científicamente responsable.
 
-Mantén el contexto de la conversación.
+Mantén el contexto.
 
-Comprende mensajes cortos utilizando el contexto
-anterior.
-
-No reinicies conversaciones.
+Comprende mensajes cortos utilizando
+la conversación anterior.
 
 Cuando el usuario pregunte sobre programación,
 puedes proporcionar código completo y funcional.
@@ -419,12 +411,60 @@ puedes proporcionar código completo y funcional.
 
 
 # =========================================================
-# LOGIN DESARROLLADOR
+# PROMPT
+# =========================================================
+
+def crear_prompt(
+    pregunta,
+    historial,
+    modo_desarrollador
+):
+
+    personalidad = (
+        DEVELOPER_PROMPT
+        if modo_desarrollador
+        else SYSTEM_PROMPT
+    )
+
+    partes = [personalidad]
+
+    if historial:
+
+        partes.append(
+            "\nCONVERSACIÓN ANTERIOR:\n"
+        )
+
+        for mensaje in historial:
+
+            partes.append(
+                f'{mensaje["rol"]}: '
+                f'{mensaje["contenido"]}\n'
+            )
+
+    partes.append(
+        "\nMENSAJE ACTUAL DEL USUARIO:\n"
+    )
+
+    partes.append(pregunta)
+
+    partes.append(
+        "\n\nResponde utilizando el contexto "
+        "anterior cuando sea necesario."
+    )
+
+    return "".join(partes)
+
+
+# =========================================================
+# MODELOS
 # =========================================================
 
 class LoginRequest(BaseModel):
-
     password: str
+
+
+class TokenRequest(BaseModel):
+    token: str = ""
 
 
 # =========================================================
@@ -460,36 +500,6 @@ def nueva_conversacion():
 
 
 # =========================================================
-# HISTORIAL DE UNA CONVERSACIÓN
-# =========================================================
-
-@app.get("/historial/{conversation_id}")
-def historial_conversacion(
-    conversation_id: str
-):
-
-    if not existe_conversacion(
-        conversation_id
-    ):
-
-        return {
-            "exito": False,
-            "conversation_id": conversation_id,
-            "mensajes": []
-        }
-
-    mensajes = obtener_todos_los_mensajes(
-        conversation_id
-    )
-
-    return {
-        "exito": True,
-        "conversation_id": conversation_id,
-        "mensajes": mensajes
-    }
-
-
-# =========================================================
 # LISTAR CONVERSACIONES
 # =========================================================
 
@@ -518,7 +528,6 @@ def listar_conversaciones():
             SELECT contenido
             FROM mensajes
             WHERE conversation_id = ?
-            AND rol = 'Usuario'
             ORDER BY id ASC
             LIMIT 1
             """,
@@ -529,23 +538,27 @@ def listar_conversaciones():
 
             titulo = primer_mensaje["contenido"]
 
+            titulo = (
+                titulo.replace("\n", " ")
+                .strip()
+            )
+
+            if len(titulo) > 42:
+                titulo = titulo[:42] + "..."
+
         else:
 
             titulo = "Nueva conversación"
-
-        if len(titulo) > 45:
-
-            titulo = titulo[:45] + "..."
 
         resultado.append({
             "conversation_id":
                 conversacion["id"],
 
+            "id":
+                conversacion["id"],
+
             "titulo":
                 titulo,
-
-            "creada":
-                conversacion["creada"],
 
             "actualizada":
                 conversacion["actualizada"]
@@ -557,6 +570,52 @@ def listar_conversaciones():
         "exito": True,
         "conversaciones": resultado
     }
+
+
+# =========================================================
+# HISTORIAL
+# =========================================================
+
+@app.get("/historial/{conversation_id}")
+def historial_conversacion(
+    conversation_id: str
+):
+
+    if not existe_conversacion(
+        conversation_id
+    ):
+
+        return {
+            "exito": False,
+            "conversation_id":
+                conversation_id,
+            "mensajes": []
+        }
+
+    mensajes = obtener_todos_los_mensajes(
+        conversation_id
+    )
+
+    return {
+        "exito": True,
+        "conversation_id":
+            conversation_id,
+        "mensajes": mensajes
+    }
+
+
+# =========================================================
+# RUTA COMPATIBLE
+# =========================================================
+
+@app.get("/conversacion/{conversation_id}")
+def conversacion_compatibilidad(
+    conversation_id: str
+):
+
+    return historial_conversacion(
+        conversation_id
+    )
 
 
 # =========================================================
@@ -580,21 +639,29 @@ def borrar_conversacion(
                 "La conversación no existe."
         }
 
-    eliminar_conversacion_db(
+    eliminada = eliminar_conversacion_db(
         conversation_id
     )
+
+    if not eliminada:
+
+        return {
+            "exito": False,
+            "mensaje":
+                "No se pudo eliminar."
+        }
 
     return {
         "exito": True,
         "conversation_id":
             conversation_id,
         "mensaje":
-            "🗑️ Conversación eliminada."
+            "Conversación eliminada."
     }
 
 
 # =========================================================
-# ACTIVAR MODO DESARROLLADOR
+# MODO DESARROLLADOR
 # =========================================================
 
 @app.post("/activar-desarrollador")
@@ -607,7 +674,7 @@ def activar_desarrollador(
         return {
             "exito": False,
             "mensaje":
-                "❌ El modo desarrollador "
+                "El modo desarrollador "
                 "no está configurado."
         }
 
@@ -616,119 +683,40 @@ def activar_desarrollador(
         DEV_PASSWORD
     ):
 
-        print(
-            "⚠️ Intento de acceso rechazado"
-        )
-
         return {
             "exito": False,
             "mensaje":
-                "❌ Contraseña incorrecta."
+                "Contraseña incorrecta."
         }
 
     token = secrets.token_urlsafe(32)
 
     sesiones_desarrollador.add(token)
 
-    print(
-        "🔓 MODO DESARROLLADOR ACTIVADO"
-    )
-
     return {
         "exito": True,
         "mensaje":
-            "🧠 Modo desarrollador activado.",
+            "Modo desarrollador activado.",
         "token": token
     }
 
 
-# =========================================================
-# DESACTIVAR MODO DESARROLLADOR
-# =========================================================
-
 @app.post("/desactivar-desarrollador")
 def desactivar_desarrollador(
-    token: str = ""
+    datos: TokenRequest
 ):
 
-    if token:
+    if datos.token:
 
         sesiones_desarrollador.discard(
-            token
+            datos.token
         )
 
     return {
         "exito": True,
         "mensaje":
-            "🔒 Modo desarrollador desactivado."
+            "Modo desarrollador desactivado."
     }
-
-
-# =========================================================
-# CREAR PROMPT
-# =========================================================
-
-def crear_prompt(
-    pregunta,
-    historial,
-    modo_desarrollador
-):
-
-    personalidad = (
-        DEVELOPER_PROMPT
-        if modo_desarrollador
-        else SYSTEM_PROMPT
-    )
-
-    contexto = ""
-
-    if historial:
-
-        contexto = (
-            "\n\n"
-            "CONVERSACIÓN ANTERIOR:\n\n"
-        )
-
-        for mensaje in historial:
-
-            contexto += (
-                mensaje["rol"]
-                + ": "
-                + mensaje["contenido"]
-                + "\n"
-            )
-
-    prompt = (
-        personalidad
-        + contexto
-        + "\n\n"
-        + "MENSAJE ACTUAL DEL USUARIO:\n"
-        + pregunta
-        + "\n\n"
-        + "Responde al mensaje actual utilizando "
-        + "el contexto anterior cuando sea necesario."
-    )
-
-    return prompt
-
-
-# =========================================================
-# OBTENER O CREAR CONVERSACIÓN
-# =========================================================
-
-def obtener_o_crear_conversacion(
-    conversation_id
-):
-
-    if conversation_id:
-
-        if existe_conversacion(
-            conversation_id
-        ):
-
-            return conversation_id
-
-    return crear_conversacion_db()
 
 
 # =========================================================
@@ -742,15 +730,14 @@ def preguntar_stream(
     token: str = ""
 ):
 
-    print()
-    print("====================================")
-    print("🦖 NUEVA PREGUNTA")
-    print(pregunta)
-    print("====================================")
+    if not pregunta.strip():
 
-    # -----------------------------------------------------
-    # API KEY
-    # -----------------------------------------------------
+        return {
+            "exito": False,
+            "mensaje":
+                "La pregunta está vacía."
+        }
+
 
     if not API_KEY or client is None:
 
@@ -760,8 +747,8 @@ def preguntar_stream(
                 {
                     "tipo": "error",
                     "mensaje":
-                        "❌ PaleoIA no tiene configurada "
-                        "la GEMINI_API_KEY."
+                        "PaleoIA no tiene "
+                        "GEMINI_API_KEY."
                 },
                 ensure_ascii=False
             ) + "\n"
@@ -776,11 +763,22 @@ def preguntar_stream(
     # CONVERSACIÓN
     # -----------------------------------------------------
 
-    conversation_id = (
-        obtener_o_crear_conversacion(
-            conversation_id
-        )
-    )
+    if not conversation_id:
+
+        conversation_id = crear_conversacion_db()
+
+    elif not existe_conversacion(
+        conversation_id
+    ):
+
+        # IMPORTANTE:
+        # No sustituimos silenciosamente
+        # un ID inválido por otro.
+        return {
+            "exito": False,
+            "mensaje":
+                "La conversación no existe."
+        }
 
 
     # -----------------------------------------------------
@@ -788,8 +786,9 @@ def preguntar_stream(
     # -----------------------------------------------------
 
     modo_desarrollador = (
-        bool(token)
-        and token in sesiones_desarrollador
+        token in sesiones_desarrollador
+        if token
+        else False
     )
 
 
@@ -815,7 +814,7 @@ def preguntar_stream(
 
 
     # -----------------------------------------------------
-    # GUARDAR PREGUNTA
+    # GUARDAR USUARIO
     # -----------------------------------------------------
 
     guardar_mensaje(
@@ -826,7 +825,7 @@ def preguntar_stream(
 
 
     # -----------------------------------------------------
-    # GENERADOR
+    # STREAM
     # -----------------------------------------------------
 
     def generar():
@@ -834,12 +833,6 @@ def preguntar_stream(
         texto_completo = ""
 
         try:
-
-            print(
-                "🧠 Generando con "
-                + MODEL_NAME
-                + "..."
-            )
 
             respuesta = (
                 client.models.generate_content_stream(
@@ -870,10 +863,6 @@ def preguntar_stream(
                 ) + "\n"
 
 
-            # -------------------------------------------------
-            # GUARDAR RESPUESTA
-            # -------------------------------------------------
-
             if texto_completo:
 
                 guardar_mensaje(
@@ -895,20 +884,12 @@ def preguntar_stream(
             ) + "\n"
 
 
-            print(
-                "✅ Respuesta terminada"
-            )
-
-
         except Exception as error:
 
             error_texto = str(error)
 
             print(
-                "❌ Error streaming:"
-            )
-
-            print(
+                "ERROR GEMINI:",
                 error_texto
             )
 
@@ -921,29 +902,29 @@ def preguntar_stream(
             ):
 
                 mensaje = (
-                    "⏳ Se alcanzó el límite "
-                    "gratuito de Gemini. "
-                    "Espera unos segundos y "
-                    "vuelve a intentarlo."
+                    "⏳ Gemini alcanzó "
+                    "el límite de solicitudes. "
+                    "Espera unos segundos "
+                    "antes de volver a intentar."
                 )
 
             elif (
                 "404" in error_texto
                 or
-                "NOT_FOUND"
-                in error_texto
+                "NOT_FOUND" in error_texto
             ):
 
                 mensaje = (
-                    "❌ El modelo de Gemini "
+                    "❌ El modelo "
+                    f"{MODEL_NAME} "
                     "no está disponible."
                 )
 
             else:
 
                 mensaje = (
-                    "❌ Ocurrió un error al "
-                    "generar la respuesta."
+                    "❌ Error al generar "
+                    "la respuesta."
                 )
 
 
@@ -960,9 +941,10 @@ def preguntar_stream(
         generar(),
         media_type="application/x-ndjson",
         headers={
-            "Cache-Control": "no-cache",
-            "Connection": "keep-alive",
-            "X-Accel-Buffering": "no"
+            "Cache-Control":
+                "no-cache, no-store",
+            "X-Accel-Buffering":
+                "no"
         }
     )
 
@@ -981,28 +963,37 @@ def preguntar(
     if not API_KEY or client is None:
 
         return {
-            "pregunta": pregunta,
+            "exito": False,
             "respuesta":
-                "❌ GEMINI_API_KEY no configurada."
+                "PaleoIA no tiene configurada "
+                "la GEMINI_API_KEY."
         }
 
 
-    conversation_id = (
-        obtener_o_crear_conversacion(
-            conversation_id
-        )
-    )
+    if not conversation_id:
+
+        conversation_id = crear_conversacion_db()
+
+    elif not existe_conversacion(
+        conversation_id
+    ):
+
+        return {
+            "exito": False,
+            "respuesta":
+                "La conversación no existe."
+        }
 
 
     modo_desarrollador = (
-        bool(token)
-        and token in sesiones_desarrollador
+        token in sesiones_desarrollador
+        if token
+        else False
     )
 
 
     historial = obtener_historial(
-        conversation_id,
-        MAX_MENSAJES_MEMORIA
+        conversation_id
     )
 
 
@@ -1036,15 +1027,11 @@ def preguntar(
         )
 
         return {
-            "pregunta":
-                pregunta,
-
-            "respuesta":
-                texto,
-
+            "exito": True,
+            "pregunta": pregunta,
+            "respuesta": texto,
             "modo_desarrollador":
                 modo_desarrollador,
-
             "conversation_id":
                 conversation_id
         }
@@ -1054,11 +1041,6 @@ def preguntar(
 
         error_texto = str(error)
 
-        print(
-            "❌ Error:",
-            error_texto
-        )
-
         if (
             "429" in error_texto
             or
@@ -1067,29 +1049,21 @@ def preguntar(
         ):
 
             mensaje = (
-                "⏳ Se alcanzó el límite "
-                "gratuito de Gemini. "
-                "Espera unos segundos y "
-                "vuelve a intentarlo."
+                "⏳ Gemini alcanzó "
+                "el límite de solicitudes."
             )
 
         else:
 
             mensaje = (
-                "❌ Ocurrió un error al "
-                "consultar Gemini."
+                "❌ Ocurrió un error "
+                "al consultar Gemini."
             )
 
         return {
-            "pregunta":
-                pregunta,
-
-            "respuesta":
-                mensaje,
-
-            "modo_desarrollador":
-                modo_desarrollador,
-
+            "exito": False,
+            "pregunta": pregunta,
+            "respuesta": mensaje,
             "conversation_id":
                 conversation_id
         }
