@@ -1,28 +1,35 @@
 * {
     margin: 0;
     padding: 0;
-    box-sizing: border-box;}
+    box-sizing: border-box;
+}
 
 
-html {
-    scroll-behavior: smooth;
+html,
+body {
+    width: 100%;
+    height: 100%;
 }
 
 
 body {
-    font-family: Arial, sans-serif;
-    min-height: 100vh;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
 
     background:
         linear-gradient(
-            rgba(20, 50, 30, 0.92),
-            rgba(45, 70, 35, 0.95)
+            135deg,
+            #142f1c,
+            #2d4623
         );
 
     color: #f5f0d8;
-    overflow-x: hidden;
-}
 
+    overflow: hidden;
+}
 
 
 /* ==========================================
@@ -30,138 +37,129 @@ body {
 ========================================== */
 
 header {
+
+    position: fixed;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
     height: 80px;
 
     display: flex;
+
     align-items: center;
+
     justify-content: space-between;
 
-    padding: 0 8%;
-
-    border-bottom:
-        1px solid rgba(255,255,255,0.15);
+    padding: 0 35px 0 30px;
 
     background:
-        rgba(20,40,25,0.65);
+        rgba(18, 38, 23, .94);
 
-    backdrop-filter: blur(10px);
+    border-bottom:
+        1px solid rgba(255,255,255,.12);
 
-    position: relative;
-    z-index: 100;
+    backdrop-filter:
+        blur(16px);
+
+    z-index: 1000;
 }
 
 
 .logo {
+
     display: flex;
+
     align-items: center;
+
     gap: 12px;
 }
 
 
 .logo-dino {
-    font-size: 40px;
+    font-size: 38px;
 }
 
 
-.logo h1 {
-    font-size: 25px;
+.logo-texto h1 {
+
     color: #b7d67c;
+
+    font-size: 25px;
+
+    line-height: 1;
 }
 
 
-.logo span {
-    font-size: 12px;
-    opacity: .7;
+.logo-texto span {
+
+    display: block;
+
+    margin-top: 5px;
+
+    font-size: 11px;
+
+    opacity: .6;
+}
+
+
+.header-botones {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
 }
 
 
 .boton-info {
-    background: transparent;
+
+    padding:
+        9px 17px;
 
     border:
         1px solid #b7d67c;
 
-    color: #b7d67c;
+    border-radius:
+        20px;
 
-    padding: 10px 18px;
+    background:
+        transparent;
 
-    border-radius: 20px;
+    color:
+        #b7d67c;
 
-    cursor: pointer;
+    cursor:
+        pointer;
 
-    transition: .2s;
+    transition:
+        .2s;
 }
 
 
 .boton-info:hover {
+
     background:
-        rgba(183,214,124,.15);
+        rgba(183,214,124,.14);
 }
 
-
-/*
-   El botón de desarrollador ya no aparece
-   visualmente.
-*/
-
-#botonDesarrollador {
-    display: none !important;
-}
-
-
-
-/* ==========================================
-   BOTÓN MENÚ
-========================================== */
 
 .boton-menu {
-    display: none;
 
-    background: transparent;
+    display: none;
 
     border: none;
 
+    background: transparent;
+
     color: #b7d67c;
 
-    font-size: 30px;
+    font-size: 28px;
 
     cursor: pointer;
-
-    padding: 5px;
 }
-
-
-
-/* ==========================================
-   HOJAS
-========================================== */
-
-.hojas {
-    position: fixed;
-
-    font-size: 90px;
-
-    opacity: .15;
-
-    pointer-events: none;
-
-    z-index: 0;
-}
-
-
-.hojas-izquierda {
-    left: -20px;
-    top: 100px;
-}
-
-
-.hojas-derecha {
-    right: -20px;
-    bottom: 100px;
-
-    transform: scaleX(-1);
-}
-
 
 
 /* ==========================================
@@ -169,25 +167,24 @@ header {
 ========================================== */
 
 .barra-lateral {
+
     position: fixed;
 
-    left: 0;
     top: 80px;
     bottom: 0;
+    left: 0;
 
     width: 250px;
 
     padding: 25px 18px;
 
     background:
-        rgba(15,35,20,0.96);
+        rgba(12, 30, 17, .98);
 
     border-right:
-        1px solid rgba(255,255,255,0.12);
+        1px solid rgba(255,255,255,.1);
 
-    backdrop-filter: blur(10px);
-
-    z-index: 90;
+    z-index: 900;
 
     overflow-y: auto;
 
@@ -197,62 +194,67 @@ header {
 
 
 .sidebar-logo {
-    font-size: 20px;
 
     color: #b7d67c;
+
+    font-size: 20px;
 
     margin-bottom: 25px;
 }
 
 
 .nuevo-chat {
+
     width: 100%;
 
-    padding: 12px 15px;
+    padding: 12px;
 
     border:
-        1px solid rgba(183,214,124,0.4);
+        1px solid
+        rgba(183,214,124,.35);
 
     border-radius: 12px;
 
     background:
-        rgba(183,214,124,0.12);
+        rgba(183,214,124,.1);
 
     color: #f5f0d8;
 
-    font-size: 15px;
-
     cursor: pointer;
 
-    transition: .2s;
+    font-size: 14px;
 }
 
 
 .nuevo-chat:hover {
+
     background:
-        rgba(183,214,124,0.22);
+        rgba(183,214,124,.2);
 }
 
 
 .historial {
+
     margin-top: 30px;
 }
 
 
 .historial-titulo {
-    font-size: 12px;
 
-    text-transform: uppercase;
+    margin-bottom: 12px;
+
+    font-size: 11px;
 
     letter-spacing: 1px;
 
-    opacity: .5;
+    text-transform: uppercase;
 
-    margin-bottom: 12px;
+    opacity: .45;
 }
 
 
 #listaConversaciones {
+
     display: flex;
 
     flex-direction: column;
@@ -261,23 +263,12 @@ header {
 }
 
 
-#listaConversaciones button {
-    transition: .2s;
-}
-
-
-#listaConversaciones button:hover {
-    background:
-        rgba(183,214,124,.15) !important;
-}
-
-
-
 /* ==========================================
-   FONDO DEL MENÚ
+   FONDO MENÚ
 ========================================== */
 
 .fondo-menu {
+
     display: none;
 
     position: fixed;
@@ -287,9 +278,7 @@ header {
     background:
         rgba(0,0,0,.55);
 
-    backdrop-filter: blur(2px);
-
-    z-index: 80;
+    z-index: 850;
 }
 
 
@@ -298,24 +287,33 @@ header {
 }
 
 
-
 /* ==========================================
-   CONTENIDO
+   CONTENIDO PRINCIPAL
 ========================================== */
 
 main {
-    max-width: 900px;
 
-    margin-left: 250px;
-    margin-right: auto;
+    position: fixed;
 
-    padding: 70px 40px;
+    top: 80px;
+    left: 250px;
+    right: 0;
+    bottom: 0;
 
-    position: relative;
+    height:
+        calc(100vh - 80px);
 
-    z-index: 1;
+    padding:
+        28px 40px 15px;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    overflow: hidden;
 }
-
 
 
 /* ==========================================
@@ -323,39 +321,50 @@ main {
 ========================================== */
 
 .hero {
+
+    flex-shrink: 0;
+
     text-align: center;
+
+    padding-bottom: 5px;
 }
 
 
 .ojo-ia {
-    width: 65px;
-    height: 65px;
 
-    margin: auto;
-    margin-bottom: 20px;
+    width: 52px;
+    height: 52px;
 
-    border-radius: 50%;
+    margin:
+        0 auto 10px;
 
     display: flex;
 
     align-items: center;
     justify-content: center;
 
-    font-size: 30px;
+    border-radius: 50%;
 
     background: #243f25;
 
     border:
         2px solid #b7d67c;
 
+    color: #b7d67c;
+
+    font-size: 25px;
+
     box-shadow:
-        0 0 20px rgba(183,214,124,.4);
+        0 0 20px
+        rgba(183,214,124,.3);
 }
 
 
 .hero h2 {
-    font-size: 45px;
-    margin-bottom: 20px;
+
+    font-size: 36px;
+
+    margin-bottom: 8px;
 }
 
 
@@ -365,15 +374,17 @@ main {
 
 
 .hero p {
+
     max-width: 650px;
 
     margin: auto;
 
-    line-height: 1.7;
+    font-size: 13px;
 
-    opacity: .8;
+    line-height: 1.5;
+
+    opacity: .65;
 }
-
 
 
 /* ==========================================
@@ -381,150 +392,167 @@ main {
 ========================================== */
 
 .chat {
-    margin-top: 50px;
+
+    flex: 1;
+
+    min-height: 0;
+
+    width: 100%;
+
+    max-width: 900px;
+
+    margin:
+        15px auto 0;
+
+    display: flex;
+
+    flex-direction: column;
 }
 
 
-/*
-   CAMBIO PRINCIPAL:
-
-   El historial tiene una altura limitada.
-
-   Los mensajes nuevos NO hacen crecer
-   toda la página.
-
-   Se utiliza la rueda del mouse,
-   trackpad o dedo para consultar
-   mensajes anteriores.
-*/
+/* ==========================================
+   CONVERSACIÓN
+========================================== */
 
 #conversacion {
+
+    flex: 1;
+
+    min-height: 0;
+
+    overflow-y: auto;
+
+    overflow-x: hidden;
+
     display: flex;
 
     flex-direction: column;
 
     gap: 18px;
 
-    height: 500px;
-
-    max-height: 60vh;
-
-    overflow-y: auto;
-
-    overflow-x: hidden;
-
-    padding: 8px 12px 20px 4px;
+    padding:
+        8px 10px 20px;
 
     scroll-behavior: smooth;
-
-    scrollbar-width: thin;
-
-    scrollbar-color:
-        rgba(183,214,124,.55)
-        rgba(255,255,255,.05);
 }
 
 
-/*
-   Barra de desplazamiento para Chrome,
-   Edge y navegadores basados en Chromium.
-*/
+/* Scroll */
+
+#conversacion {
+    scrollbar-width: thin;
+
+    scrollbar-color:
+        rgba(183,214,124,.45)
+        transparent;
+}
+
 
 #conversacion::-webkit-scrollbar {
-    width: 8px;
+    width: 7px;
 }
 
 
 #conversacion::-webkit-scrollbar-track {
-    background:
-        rgba(255,255,255,.04);
-
-    border-radius: 10px;
+    background: transparent;
 }
 
 
 #conversacion::-webkit-scrollbar-thumb {
+
     background:
-        rgba(183,214,124,.55);
+        rgba(183,214,124,.35);
 
     border-radius: 10px;
 }
 
 
-#conversacion::-webkit-scrollbar-thumb:hover {
-    background:
-        rgba(183,214,124,.8);
-}
-
-
+/* ==========================================
+   MENSAJES
+========================================== */
 
 .mensaje {
-    display: flex;
-
-    gap: 12px;
 
     width: 100%;
 
-    flex-shrink: 0;
+    display: flex;
+
+    gap: 10px;
+
+    animation:
+        aparecerMensaje .18s ease;
 }
 
 
 .mensaje.ia {
-    justify-content: flex-start;
+
+    justify-content:
+        flex-start;
 }
 
 
 .mensaje.usuario {
-    justify-content: flex-end;
+
+    justify-content:
+        flex-end;
 }
 
 
 .avatar {
-    width: 45px;
-    height: 45px;
+
+    width: 40px;
+    height: 40px;
+
+    flex-shrink: 0;
 
     display: flex;
 
     align-items: center;
     justify-content: center;
 
-    font-size: 27px;
+    border-radius: 50%;
 
     background: #243f25;
 
-    border-radius: 50%;
-
-    flex-shrink: 0;
+    font-size: 23px;
 }
 
 
+/* ==========================================
+   BURBUJAS
+========================================== */
+
 .burbuja {
+
+    max-width: 78%;
+
+    padding:
+        14px 17px;
+
+    border-radius: 16px;
+
     background:
-        rgba(255,255,255,.08);
+        rgba(255,255,255,.075);
 
     border:
-        1px solid rgba(255,255,255,.1);
+        1px solid
+        rgba(255,255,255,.1);
 
-    padding: 18px;
+    font-size: 15px;
 
-    border-radius: 15px;
-
-    max-width: 70%;
-
-    line-height: 1.6;
+    line-height: 1.65;
 
     overflow-wrap: break-word;
-
-    word-wrap: break-word;
 }
 
 
 .burbuja strong {
-    color: #b7d67c;
 
     display: block;
 
-    margin-bottom: 6px;
+    margin-bottom: 5px;
+
+    color: #b7d67c;
 }
 
 
@@ -539,13 +567,110 @@ main {
 
 
 .mensaje.usuario .burbuja {
+
     background:
-        rgba(183,214,124,.18);
+        rgba(183,214,124,.17);
 
     border:
-        1px solid rgba(183,214,124,.25);
+        1px solid
+        rgba(183,214,124,.25);
 }
 
+
+/* ==========================================
+   RESPUESTA
+========================================== */
+
+.respuesta-stream {
+
+    white-space: normal;
+
+    word-break: break-word;
+
+    overflow-wrap: anywhere;
+
+    line-height: 1.65;
+}
+
+
+/* ==========================================
+   ZONA INFERIOR
+========================================== */
+
+.zona-entrada {
+
+    flex-shrink: 0;
+
+    padding-top: 5px;
+
+    background:
+        linear-gradient(
+            to bottom,
+            transparent,
+            rgba(27,55,30,.95) 18%
+        );
+}
+
+
+/* ==========================================
+   SUGERENCIAS
+========================================== */
+
+.sugerencias {
+
+    display: flex;
+
+    gap: 8px;
+
+    overflow-x: auto;
+
+    overflow-y: hidden;
+
+    padding:
+        5px 2px 8px;
+
+    scrollbar-width: none;
+}
+
+
+.sugerencias::-webkit-scrollbar {
+    display: none;
+}
+
+
+.sugerencias button {
+
+    flex-shrink: 0;
+
+    white-space: nowrap;
+
+    padding:
+        8px 12px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.1);
+
+    border-radius: 20px;
+
+    background:
+        rgba(255,255,255,.06);
+
+    color: white;
+
+    font-size: 12px;
+
+    cursor: pointer;
+
+    transition: .2s;
+}
+
+
+.sugerencias button:hover {
+
+    background:
+        rgba(183,214,124,.18);
+}
 
 
 /* ==========================================
@@ -553,23 +678,29 @@ main {
 ========================================== */
 
 .entrada {
-    margin-top: 30px;
 
     display: flex;
+
+    width: 100%;
+
+    padding: 7px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.16);
+
+    border-radius: 18px;
 
     background:
         rgba(255,255,255,.08);
 
-    border:
-        1px solid rgba(255,255,255,.15);
-
-    border-radius: 18px;
-
-    padding: 8px;
+    backdrop-filter:
+        blur(12px);
 }
 
 
 .entrada input {
+
     flex: 1;
 
     min-width: 0;
@@ -582,21 +713,24 @@ main {
 
     color: white;
 
-    padding: 15px;
+    padding:
+        13px;
 
-    font-size: 16px;
+    font-size: 15px;
 }
 
 
 .entrada input::placeholder {
+
     color:
-        rgba(255,255,255,.5);
+        rgba(255,255,255,.45);
 }
 
 
 .entrada button {
-    width: 50px;
-    min-width: 50px;
+
+    width: 47px;
+    min-width: 47px;
 
     border: none;
 
@@ -604,123 +738,167 @@ main {
 
     background: #b7d67c;
 
-    cursor: pointer;
+    color: #18251a;
 
-    font-size: 20px;
+    font-size: 19px;
+
+    cursor: pointer;
 
     transition: .2s;
 }
 
 
 .entrada button:hover {
-    transform: scale(1.05);
+    transform: scale(1.04);
 }
 
+
+.entrada button:disabled {
+
+    opacity: .5;
+
+    cursor: wait;
+
+    transform: none;
+}
+
+
+.entrada input:disabled {
+    opacity: .65;
+}
 
 
 /* ==========================================
-   SUGERENCIAS
+   AVISO
 ========================================== */
 
-.sugerencias {
-    display: flex;
+.aviso-chat {
 
-    flex-wrap: wrap;
-
-    gap: 10px;
-
-    margin-top: 15px;
-}
-
-
-.sugerencias button {
-    background:
-        rgba(255,255,255,.07);
-
-    border:
-        1px solid rgba(255,255,255,.1);
-
-    color: white;
-
-    padding: 9px 13px;
-
-    border-radius: 20px;
-
-    cursor: pointer;
-
-    transition: .2s;
-}
-
-
-.sugerencias button:hover {
-    background:
-        rgba(183,214,124,.2);
-}
-
-
-
-/* ==========================================
-   FOOTER
-========================================== */
-
-footer {
     text-align: center;
 
-    padding: 30px;
+    padding:
+        4px 0;
 
-    opacity: .6;
+    font-size: 9px;
 
-    font-size: 12px;
-
-    margin-left: 250px;
+    opacity: .35;
 }
-
-
-footer span {
-    display: block;
-    margin-top: 5px;
-}
-
 
 
 /* ==========================================
-   MODAL BORRAR
+   ERROR
 ========================================== */
 
+.error-paleoia {
+
+    display: block;
+
+    color: #ffb4b4;
+
+    line-height: 1.5;
+}
+
+
+/* ==========================================
+   ANIMACIÓN
+========================================== */
+
+@keyframes aparecerMensaje {
+
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* ==========================================
+   HOJAS
+========================================== */
+
+.hojas {
+
+    position: fixed;
+
+    font-size: 90px;
+
+    opacity: .12;
+
+    pointer-events: none;
+
+    z-index: 0;
+}
+
+
+.hojas-izquierda {
+
+    left: -20px;
+    top: 100px;
+}
+
+
+.hojas-derecha {
+
+    right: -20px;
+    bottom: 100px;
+
+    transform:
+        scaleX(-1);
+}
+
+
+/* ==========================================
+   MODALES
+========================================== */
+
+.modal-info,
 .modal-borrar {
+
     position: fixed;
 
     inset: 0;
 
-    display: none;
+    display: flex;
 
     align-items: center;
     justify-content: center;
 
+    padding: 20px;
+
     background:
         rgba(0,0,0,.65);
 
-    backdrop-filter: blur(6px);
+    backdrop-filter:
+        blur(7px);
 
-    z-index: 9999;
-
-    padding: 20px;
+    z-index: 5000;
 }
 
 
-.modal-borrar.activo {
-    display: flex;
+.modal-info[hidden] {
+    display: none;
 }
 
 
+.info-contenido,
 .modal-contenido {
+
+    position: relative;
+
     width: 100%;
 
-    max-width: 430px;
+    max-width: 500px;
+
+    max-height: 85vh;
+
+    overflow-y: auto;
 
     padding: 30px;
-
-    text-align: center;
 
     border-radius: 22px;
 
@@ -732,109 +910,189 @@ footer span {
         );
 
     border:
-        1px solid rgba(183,214,124,.4);
+        1px solid
+        rgba(183,214,124,.35);
 
     box-shadow:
-        0 20px 60px rgba(0,0,0,.5);
+        0 20px 60px
+        rgba(0,0,0,.5);
+}
 
-    animation:
-        aparecerModal .2s ease;
+
+.info-icon {
+
+    text-align: center;
+
+    font-size: 55px;
+
+    margin-bottom: 10px;
+}
+
+
+.info-contenido h2 {
+
+    text-align: center;
+
+    color: #b7d67c;
+
+    margin-bottom: 18px;
+}
+
+
+.info-contenido p {
+
+    line-height: 1.6;
+
+    margin-bottom: 15px;
+
+    opacity: .85;
+}
+
+
+.info-seccion {
+
+    margin-top: 20px;
+}
+
+
+.info-seccion h3 {
+
+    color: #b7d67c;
+
+    margin-bottom: 8px;
+}
+
+
+.cerrar-info {
+
+    position: absolute;
+
+    top: 10px;
+    right: 15px;
+
+    border: none;
+
+    background: transparent;
+
+    color: white;
+
+    font-size: 30px;
+
+    cursor: pointer;
+}
+
+
+.boton-cerrar-info {
+
+    width: 100%;
+
+    padding: 12px;
+
+    margin-top: 10px;
+
+    border: none;
+
+    border-radius: 12px;
+
+    background: #b7d67c;
+
+    color: #18251a;
+
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+
+/* ==========================================
+   MODAL BORRAR
+========================================== */
+
+.modal-borrar {
+    display: none;
+}
+
+
+.modal-borrar.activo {
+    display: flex;
 }
 
 
 .dino-sorprendido {
-    font-size: 70px;
+
+    text-align: center;
+
+    font-size: 60px;
+
     margin-bottom: 15px;
 }
 
 
 .modal-contenido h2 {
+
     color: #b7d67c;
 
-    font-size: 23px;
+    text-align: center;
 
     margin-bottom: 12px;
 }
 
 
 .modal-contenido p {
-    color: #f5f0d8;
+
+    text-align: center;
+
+    line-height: 1.5;
 
     opacity: .75;
 
-    line-height: 1.6;
-
-    margin-bottom: 25px;
+    margin-bottom: 20px;
 }
 
 
 .modal-botones {
+
     display: flex;
 
     gap: 10px;
-
-    justify-content: center;
 }
 
 
 .modal-botones button {
-    padding: 11px 18px;
+
+    flex: 1;
+
+    padding: 11px;
 
     border-radius: 12px;
 
     cursor: pointer;
-
-    font-size: 14px;
 }
 
 
 #cancelarBorrar {
+
     background:
         rgba(255,255,255,.08);
 
     border:
-        1px solid rgba(255,255,255,.15);
+        1px solid
+        rgba(255,255,255,.15);
 
-    color: #f5f0d8;
+    color: white;
 }
 
 
 #confirmarBorrar {
-    background: #b7d67c;
 
     border: none;
+
+    background: #b7d67c;
 
     color: #18251a;
 
     font-weight: bold;
 }
-
-
-#cancelarBorrar:hover {
-    background:
-        rgba(255,255,255,.15);
-}
-
-
-#confirmarBorrar:hover {
-    transform: scale(1.03);
-}
-
-
-@keyframes aparecerModal {
-
-    from {
-        opacity: 0;
-        transform: scale(.9);
-    }
-
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-
-}
-
 
 
 /* ==========================================
@@ -843,34 +1101,27 @@ footer span {
 
 @media(max-width: 700px) {
 
-    body {
-        min-width: 0;
-    }
-
-
     header {
+
         height: 70px;
-        padding: 0 18px;
-    }
 
-
-    .logo {
-        gap: 8px;
+        padding:
+            0 15px;
     }
 
 
     .logo-dino {
-        font-size: 32px;
+        font-size: 31px;
     }
 
 
-    .logo h1 {
+    .logo-texto h1 {
         font-size: 21px;
     }
 
 
-    .logo span {
-        font-size: 10px;
+    .logo-texto span {
+        font-size: 9px;
     }
 
 
@@ -885,184 +1136,168 @@ footer span {
 
 
     .barra-lateral {
+
         top: 70px;
 
         width: 280px;
 
-        transform: translateX(-100%);
-
-        box-shadow:
-            15px 0 35px rgba(0,0,0,.35);
+        transform:
+            translateX(-100%);
     }
 
 
     .barra-lateral.activo {
-        transform: translateX(0);
+
+        transform:
+            translateX(0);
     }
 
 
     main {
-        width: 100%;
 
-        max-width: none;
+        top: 70px;
+        left: 0;
 
-        margin-left: 0;
+        height:
+            calc(100vh - 70px);
 
         padding:
-            45px 18px 35px;
+            18px 12px 8px;
     }
 
 
-    footer {
-        margin-left: 0;
-        padding: 25px 18px;
+    .hero {
+
+        padding-bottom: 0;
+    }
+
+
+    .ojo-ia {
+
+        width: 45px;
+        height: 45px;
+
+        font-size: 21px;
     }
 
 
     .hero h2 {
-        font-size: 32px;
+
+        font-size: 29px;
+
         line-height: 1.2;
     }
 
 
     .hero p {
-        font-size: 14px;
-        line-height: 1.6;
-    }
 
-
-    .ojo-ia {
-        width: 55px;
-        height: 55px;
-        font-size: 25px;
+        font-size: 12px;
     }
 
 
     .chat {
-        margin-top: 35px;
+
+        margin-top: 10px;
     }
 
-
-    /*
-       En celular el historial ocupa
-       una parte cómoda de la pantalla.
-    */
 
     #conversacion {
-        height: 52vh;
 
-        max-height: 520px;
-
-        min-height: 300px;
-
-        padding-right: 8px;
-    }
-
-
-    .mensaje {
-        gap: 8px;
-    }
-
-
-    .avatar {
-        width: 38px;
-        height: 38px;
-        font-size: 23px;
+        padding:
+            5px 2px 15px;
     }
 
 
     .burbuja {
-        max-width:
-            calc(100% - 46px);
 
-        padding: 13px;
+        max-width:
+            calc(100% - 45px);
 
         font-size: 14px;
+
+        padding:
+            12px 13px;
     }
 
 
     .mensaje.usuario .burbuja {
+
         max-width: 85%;
     }
 
 
-    .entrada {
-        margin-top: 22px;
+    .sugerencias button {
 
-        padding: 6px;
+        font-size: 11px;
+
+        padding:
+            7px 10px;
+    }
+
+
+    .entrada {
 
         border-radius: 15px;
     }
 
 
     .entrada input {
-        padding: 12px 10px;
-        font-size: 15px;
+
+        font-size: 14px;
+
+        padding:
+            11px 9px;
     }
 
 
     .entrada button {
-        width: 44px;
-        min-width: 44px;
-        font-size: 18px;
+
+        width: 43px;
+        min-width: 43px;
     }
 
 
-    .sugerencias {
-        gap: 7px;
+    .aviso-chat {
+        font-size: 8px;
     }
 
 
-    .sugerencias button {
-        font-size: 12px;
-        padding: 8px 10px;
-    }
-
-
+    .info-contenido,
     .modal-contenido {
-        max-width: 100%;
-        padding: 25px 20px;
-    }
 
+        padding: 22px;
 
-    .modal-contenido h2 {
-        font-size: 20px;
-    }
-
-
-    .dino-sorprendido {
-        font-size: 58px;
+        max-height: 90vh;
     }
 
 }
 
 
-
 /* ==========================================
-   CELULARES MUY PEQUEÑOS
+   PANTALLAS PEQUEÑAS
 ========================================== */
 
-@media(max-width: 380px) {
+@media(max-height: 650px) {
 
-    .logo span {
+    .hero p {
         display: none;
     }
 
 
+    .ojo-ia {
+
+        width: 40px;
+        height: 40px;
+    }
+
+
     .hero h2 {
-        font-size: 28px;
+        font-size: 26px;
     }
 
 
-    .sugerencias button {
-        width: 100%;
-    }
-
-
-    #conversacion {
-        height: 50vh;
-        min-height: 280px;
+    .chat {
+        margin-top: 5px;
     }
 
 }
-

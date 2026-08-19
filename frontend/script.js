@@ -1,61 +1,124 @@
-const BACKEND_URL = "https://paleoia-backend.onrender.com";
+const BACKEND_URL =
+    "https://paleoia-backend.onrender.com";
+
 
 let conversationId =
-    localStorage.getItem("paleoia_conversation_id") || "";
+    localStorage.getItem(
+        "paleoia_conversation_id"
+    ) || "";
+
 
 let developerToken =
-    localStorage.getItem("paleoia_dev_token") || "";
+    localStorage.getItem(
+        "paleoia_dev_token"
+    ) || "";
 
 
 const preguntaInput =
     document.getElementById("pregunta");
 
+
 const botonPreguntar =
-    document.getElementById("botonPreguntar");
+    document.getElementById(
+        "botonPreguntar"
+    );
+
 
 const conversacion =
-    document.getElementById("conversacion");
+    document.getElementById(
+        "conversacion"
+    );
+
 
 const botonMenu =
-    document.getElementById("botonMenu");
+    document.getElementById(
+        "botonMenu"
+    );
+
 
 const barraLateral =
-    document.getElementById("barraLateral");
+    document.getElementById(
+        "barraLateral"
+    );
+
 
 const fondoMenu =
-    document.getElementById("fondoMenu");
+    document.getElementById(
+        "fondoMenu"
+    );
+
 
 const nuevoChat =
-    document.getElementById("nuevoChat");
+    document.getElementById(
+        "nuevoChat"
+    );
 
 
 /* =====================================================
-   NUEVA CONVERSACIÓN
+   CREAR CONVERSACIÓN
 ===================================================== */
 
 async function crearNuevaConversacion() {
 
     try {
 
-        const respuesta = await fetch(
-            `${BACKEND_URL}/nueva-conversacion`
-        );
+        const respuesta =
+            await fetch(
+                `${BACKEND_URL}/nueva-conversacion`
+            );
 
-        const datos = await respuesta.json();
+
+        if (!respuesta.ok) {
+
+            throw new Error(
+                "No se pudo crear la conversación."
+            );
+
+        }
+
+
+        const datos =
+            await respuesta.json();
+
 
         conversationId =
             datos.conversation_id;
 
-    } catch {
 
-        conversationId =
-            crypto.randomUUID();
+        localStorage.setItem(
+            "paleoia_conversation_id",
+            conversationId
+        );
+
+
+    } catch (error) {
+
+        console.error(error);
+
+
+        if (
+            window.crypto &&
+            crypto.randomUUID
+        ) {
+
+            conversationId =
+                crypto.randomUUID();
+
+        } else {
+
+            conversationId =
+                Date.now().toString();
+
+        }
+
+
+        localStorage.setItem(
+            "paleoia_conversation_id",
+            conversationId
+        );
+
     }
 
-    localStorage.setItem(
-        "paleoia_conversation_id",
-        conversationId
-    );
 }
 
 
@@ -68,9 +131,72 @@ function escaparHTML(texto) {
     const div =
         document.createElement("div");
 
-    div.textContent = texto;
+
+    div.textContent =
+        String(texto ?? "");
+
 
     return div.innerHTML;
+
+}
+
+
+/* =====================================================
+   LIMPIAR RESPUESTA DE GEMINI
+===================================================== */
+
+function limpiarRespuesta(texto) {
+
+    if (!texto) {
+        return "";
+    }
+
+
+    texto = String(texto);
+
+
+    /*
+       Elimina bloques de código Markdown
+       como:
+
+       ```html
+       contenido
+       ```
+
+       pero conserva el contenido.
+    */
+
+    texto = texto.replace(
+        /```(?:html|javascript|js|css|markdown|text)?/gi,
+        ""
+    );
+
+
+    texto = texto.replace(
+        /```/g,
+        ""
+    );
+
+
+    /*
+       Elimina etiquetas HTML que Gemini
+       pueda devolver accidentalmente.
+    */
+
+    texto = texto.replace(
+        /<!DOCTYPE[^>]*>/gi,
+        ""
+    );
+
+
+    texto = texto.replace(
+        /<\/?(html|head|body)[^>]*>/gi,
+        ""
+    );
+
+
+    return texto.trim();
+
 }
 
 
@@ -80,63 +206,88 @@ function escaparHTML(texto) {
 
 function formatearRespuesta(texto) {
 
-    texto = texto
-        .replace(/```html/gi, "")
-        .replace(/```javascript/gi, "")
-        .replace(/```js/gi, "")
-        .replace(/```css/gi, "")
-        .replace(/```markdown/gi, "")
-        .replace(/```/g, "");
+    texto =
+        limpiarRespuesta(texto);
 
-    texto = escaparHTML(texto);
+
+    texto =
+        escaparHTML(texto);
+
+
+    /*
+       Negritas
+    */
 
     texto = texto.replace(
         /\*\*(.*?)\*\*/g,
         "<strong>$1</strong>"
     );
 
+
+    /*
+       Cursivas
+    */
+
     texto = texto.replace(
-        /\*(.*?)\*/g,
+        /(?<!\*)\*([^*]+)\*(?!\*)/g,
         "<em>$1</em>"
     );
+
+
+    /*
+       Saltos de línea
+    */
 
     texto = texto.replace(
         /\n/g,
         "<br>"
     );
 
+
     return texto;
+
 }
 
 
 /* =====================================================
-   MENSAJE USUARIO
+   AGREGAR MENSAJE DEL USUARIO
 ===================================================== */
 
-function agregarMensajeUsuario(texto) {
+function agregarMensajeUsuario(
+    texto
+) {
 
     const mensaje =
         document.createElement("div");
 
+
     mensaje.className =
         "mensaje usuario";
 
+
     mensaje.innerHTML = `
+
         <div class="burbuja">
+
             ${escaparHTML(texto)}
+
         </div>
+
     `;
+
 
     conversacion.appendChild(
         mensaje
     );
 
+
     desplazarChatAbajo();
+
 }
 
 
 /* =====================================================
-   MENSAJE IA
+   CREAR RESPUESTA DE PALEOIA
 ===================================================== */
 
 function crearMensajeIA() {
@@ -144,10 +295,13 @@ function crearMensajeIA() {
     const mensaje =
         document.createElement("div");
 
+
     mensaje.className =
         "mensaje ia";
 
+
     mensaje.innerHTML = `
+
         <div class="avatar">
             🦖
         </div>
@@ -158,35 +312,45 @@ function crearMensajeIA() {
                 PaleoIA
             </strong>
 
-            <p class="respuesta-stream"></p>
+            <p
+                class="respuesta-stream"
+            ></p>
 
         </div>
+
     `;
+
 
     conversacion.appendChild(
         mensaje
     );
 
+
     desplazarChatAbajo();
+
 
     return mensaje.querySelector(
         ".respuesta-stream"
     );
+
 }
 
 
 /* =====================================================
-   SCROLL
+   SCROLL DEL CHAT
 ===================================================== */
 
 function desplazarChatAbajo() {
 
-    requestAnimationFrame(() => {
+    requestAnimationFrame(
+        () => {
 
-        conversacion.scrollTop =
-            conversacion.scrollHeight;
+            conversacion.scrollTop =
+                conversacion.scrollHeight;
 
-    });
+        }
+    );
+
 }
 
 
@@ -199,6 +363,7 @@ async function preguntar() {
     const pregunta =
         preguntaInput.value.trim();
 
+
     if (!pregunta) {
         return;
     }
@@ -206,6 +371,7 @@ async function preguntar() {
 
     botonPreguntar.disabled =
         true;
+
 
     preguntaInput.disabled =
         true;
@@ -223,7 +389,13 @@ async function preguntar() {
         crearMensajeIA();
 
 
-    let respuestaCompleta = "";
+    /*
+       Indicador mientras comienza
+       la respuesta.
+    */
+
+    respuestaElemento.innerHTML =
+        "🧠 Pensando...";
 
 
     try {
@@ -231,7 +403,8 @@ async function preguntar() {
         const parametros =
             new URLSearchParams({
 
-                pregunta,
+                pregunta:
+                    pregunta,
 
                 conversation_id:
                     conversationId,
@@ -244,7 +417,7 @@ async function preguntar() {
 
         const respuesta =
             await fetch(
-                `${BACKEND_URL}/preguntar-stream?${parametros}`
+                `${BACKEND_URL}/preguntar-stream?${parametros.toString()}`
             );
 
 
@@ -257,32 +430,51 @@ async function preguntar() {
         }
 
 
+        if (!respuesta.body) {
+
+            throw new Error(
+                "El servidor no devolvió streaming."
+            );
+
+        }
+
+
         const reader =
             respuesta.body.getReader();
 
+
         const decoder =
-            new TextDecoder("utf-8");
+            new TextDecoder(
+                "utf-8"
+            );
 
 
         let buffer = "";
 
 
+        /*
+           Quitamos el "Pensando..."
+           cuando llega el primer texto.
+        */
+
+        let comenzoRespuesta =
+            false;
+
+
         while (true) {
 
-            const {
-                value,
-                done
-            } = await reader.read();
+            const resultado =
+                await reader.read();
 
 
-            if (done) {
+            if (resultado.done) {
                 break;
             }
 
 
             buffer +=
                 decoder.decode(
-                    value,
+                    resultado.value,
                     {
                         stream: true
                     }
@@ -297,7 +489,9 @@ async function preguntar() {
                 lineas.pop();
 
 
-            for (const linea of lineas) {
+            for (
+                const linea of lineas
+            ) {
 
                 if (!linea.trim()) {
                     continue;
@@ -307,25 +501,47 @@ async function preguntar() {
                 try {
 
                     const datos =
-                        JSON.parse(linea);
+                        JSON.parse(
+                            linea
+                        );
 
+
+                    /*
+                       TEXTO
+                    */
 
                     if (
                         datos.tipo ===
                         "texto"
                     ) {
 
-                        respuestaCompleta +=
-                            datos.texto;
+                        if (
+                            !comenzoRespuesta
+                        ) {
 
-                        respuestaElemento.innerHTML =
+                            respuestaElemento.innerHTML =
+                                "";
+
+                            comenzoRespuesta =
+                                true;
+
+                        }
+
+
+                        respuestaElemento.innerHTML +=
                             formatearRespuesta(
-                                respuestaCompleta
+                                datos.texto
                             );
 
+
                         desplazarChatAbajo();
+
                     }
 
+
+                    /*
+                       FINAL
+                    */
 
                     if (
                         datos.tipo ===
@@ -339,6 +555,7 @@ async function preguntar() {
                             conversationId =
                                 datos.conversation_id;
 
+
                             localStorage.setItem(
                                 "paleoia_conversation_id",
                                 conversationId
@@ -349,26 +566,33 @@ async function preguntar() {
                     }
 
 
+                    /*
+                       ERROR
+                    */
+
                     if (
                         datos.tipo ===
                         "error"
                     ) {
 
-                        respuestaElemento.innerHTML =
-                            `
-                            <span class="error-paleoia">
+                        respuestaElemento.innerHTML = `
+
+                            <span
+                                class="error-paleoia"
+                            >
                                 ${escaparHTML(
                                     datos.mensaje
                                 )}
                             </span>
-                            `;
-                    }
 
+                        `;
+
+                    }
 
                 } catch (error) {
 
                     console.warn(
-                        "Respuesta no válida:",
+                        "Datos no válidos:",
                         linea
                     );
 
@@ -387,12 +611,15 @@ async function preguntar() {
         );
 
 
-        respuestaElemento.innerHTML =
-            `
-            <span class="error-paleoia">
+        respuestaElemento.innerHTML = `
+
+            <span
+                class="error-paleoia"
+            >
                 ❌ No se pudo conectar con PaleoIA.
             </span>
-            `;
+
+        `;
 
     }
 
@@ -400,12 +627,16 @@ async function preguntar() {
     botonPreguntar.disabled =
         false;
 
+
     preguntaInput.disabled =
         false;
 
+
     preguntaInput.focus();
 
+
     desplazarChatAbajo();
+
 }
 
 
@@ -415,7 +646,7 @@ async function preguntar() {
 
 preguntaInput.addEventListener(
     "keydown",
-    evento => {
+    (evento) => {
 
         if (
             evento.key === "Enter" &&
@@ -433,7 +664,7 @@ preguntaInput.addEventListener(
 
 
 /* =====================================================
-   BOTÓN
+   BOTÓN ENVIAR
 ===================================================== */
 
 botonPreguntar.addEventListener(
@@ -450,21 +681,24 @@ document
     .querySelectorAll(
         ".sugerencias button"
     )
-    .forEach(boton => {
+    .forEach(
+        (boton) => {
 
-        boton.addEventListener(
-            "click",
-            () => {
+            boton.addEventListener(
+                "click",
+                () => {
 
-                preguntaInput.value =
-                    boton.textContent.trim();
+                    preguntaInput.value =
+                        boton.textContent.trim();
 
-                preguntar();
 
-            }
-        );
+                    preguntar();
 
-    });
+                }
+            );
+
+        }
+    );
 
 
 /* =====================================================
@@ -477,9 +711,11 @@ function abrirMenu() {
         "activo"
     );
 
+
     fondoMenu.classList.add(
         "activo"
     );
+
 }
 
 
@@ -489,9 +725,11 @@ function cerrarMenu() {
         "activo"
     );
 
+
     fondoMenu.classList.remove(
         "activo"
     );
+
 }
 
 
@@ -526,6 +764,7 @@ if (nuevoChat) {
         async () => {
 
             conversacion.innerHTML = `
+
                 <div class="mensaje ia">
 
                     <div class="avatar">
@@ -549,10 +788,12 @@ if (nuevoChat) {
                     </div>
 
                 </div>
+
             `;
 
 
             await crearNuevaConversacion();
+
 
             cerrarMenu();
 
@@ -566,8 +807,15 @@ if (nuevoChat) {
    INICIO
 ===================================================== */
 
-if (!conversationId) {
+async function iniciarPaleoIA() {
 
-    crearNuevaConversacion();
+    if (!conversationId) {
+
+        await crearNuevaConversacion();
+
+    }
 
 }
+
+
+iniciarPaleoIA();

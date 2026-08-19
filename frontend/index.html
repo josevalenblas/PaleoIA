@@ -1,94 +1,32 @@
-```html
 <!DOCTYPE html>
 <html lang="es">
 
 <head>
-
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <title>PaleoIA — Inteligencia artificial para explorar la prehistoria</title>
+    <title>PaleoIA | Explora el pasado</title>
 
     <meta
         name="description"
-        content="PaleoIA es una inteligencia artificial especializada en paleontología, dinosaurios, animales prehistóricos y la historia de la vida en la Tierra."
+        content="PaleoIA es una inteligencia artificial para explorar dinosaurios, paleontología y animales prehistóricos."
     >
-
-    <meta
-        name="robots"
-        content="index, follow"
-    >
-
-    <meta name="theme-color" content="#162b1b">
-
-    <link
-        rel="canonical"
-        href="https://josevalenblas.github.io/PaleoIA/"
-    >
-
-    <!-- Open Graph -->
-    <meta
-        property="og:title"
-        content="PaleoIA — Explora el pasado"
-    >
-
-    <meta
-        property="og:description"
-        content="Explora dinosaurios, mamíferos prehistóricos, reptiles marinos y la historia de la vida con PaleoIA."
-    >
-
-    <meta
-        property="og:type"
-        content="website"
-    >
-
-    <meta
-        property="og:url"
-        content="https://josevalenblas.github.io/PaleoIA/"
-    >
-
-    <!-- Datos para ayudar a Google a identificar el sitio -->
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "WebSite",
-        "name": "PaleoIA",
-        "alternateName": "Paleo IA",
-        "url": "https://josevalenblas.github.io/PaleoIA/",
-        "description": "Inteligencia artificial especializada en paleontología y animales prehistóricos."
-    }
-    </script>
 
     <link rel="stylesheet" href="style.css">
-
     <link rel="stylesheet" href="dev.css">
-
 </head>
-
 
 <body>
 
-
     <!-- ==========================================
-         DECORACIÓN
+         ENCABEZADO FIJO
     =========================================== -->
 
-    <div class="hojas hojas-izquierda">
-        🌿🌿
-    </div>
-
-    <div class="hojas hojas-derecha">
-        🌿🌿
-    </div>
-
-
-
-    <!-- ==========================================
-         ENCABEZADO
-    =========================================== -->
-
-    <header>
+    <header id="encabezado">
 
         <div class="logo">
 
@@ -96,11 +34,9 @@
                 🦖
             </div>
 
-            <div>
+            <div class="logo-texto">
 
-                <h1>
-                    PaleoIA
-                </h1>
+                <h1>PaleoIA</h1>
 
                 <span>
                     Explora el pasado
@@ -123,30 +59,15 @@
         <div class="header-botones">
 
             <button
-                class="boton-info"
                 id="botonInfo"
+                class="boton-info"
             >
                 ¿Qué es PaleoIA?
-            </button>
-
-
-            <!--
-                El botón de desarrollador permanece
-                en el HTML por compatibilidad con dev.js.
-                Se oculta mediante CSS.
-            -->
-
-            <button
-                id="botonDesarrollador"
-                class="boton-desarrollador"
-            >
-                👨‍💻 Desarrollador
             </button>
 
         </div>
 
     </header>
-
 
 
     <!-- ==========================================
@@ -157,7 +78,6 @@
         id="fondoMenu"
         class="fondo-menu"
     ></div>
-
 
 
     <!-- ==========================================
@@ -194,13 +114,11 @@
                 Conversaciones
             </p>
 
-
             <div id="listaConversaciones"></div>
 
         </div>
 
     </aside>
-
 
 
     <!-- ==========================================
@@ -209,39 +127,33 @@
 
     <main>
 
+        <!-- ======================================
+             PRESENTACIÓN
+        ======================================= -->
 
-        <!-- HERO -->
-
-        <section class="hero">
+        <section
+            class="hero"
+            id="hero"
+        >
 
             <div class="ojo-ia">
                 ◉
             </div>
 
-
             <h2>
-
                 Descubre el mundo
-
-                <span>
-                    prehistórico
-                </span>
-
+                <span>prehistórico</span>
             </h2>
 
-
             <p>
-
                 Pregunta sobre dinosaurios,
                 mamíferos prehistóricos,
                 reptiles marinos y cualquier
                 animal que haya habitado
                 nuestro planeta.
-
             </p>
 
         </section>
-
 
 
         <!-- ======================================
@@ -251,19 +163,14 @@
         <section class="chat">
 
 
-            <!--
-                IMPORTANTE:
-
-                Esta caja ahora tiene una altura limitada.
-                Los mensajes antiguos se consultan
-                desplazándose dentro de ella.
-            -->
+            <!-- ==================================
+                 MENSAJES
+            =================================== -->
 
             <div
                 id="conversacion"
-                class="conversacion-scroll"
+                class="conversacion"
             >
-
 
                 <div class="mensaje ia">
 
@@ -271,113 +178,102 @@
                         🦖
                     </div>
 
-
                     <div class="burbuja">
 
                         <strong>
                             PaleoIA
                         </strong>
 
-
                         <p>
                             ¡Hola, explorador! 🌿
                         </p>
 
-
                         <p>
-
                             Pregúntame lo que quieras
-                            sobre nuestros amigos
-                            prehistóricos.
-
+                            sobre dinosaurios y vida
+                            prehistórica.
                         </p>
 
                     </div>
 
                 </div>
 
-
             </div>
-
 
 
             <!-- ==================================
-                 ENTRADA
+                 PARTE INFERIOR DEL CHAT
             =================================== -->
 
-            <div class="entrada">
-
-                <input
-                    type="text"
-                    id="pregunta"
-                    placeholder="¿Qué quieres descubrir?"
-                    autocomplete="off"
-                >
+            <div class="zona-entrada">
 
 
-                <button
-                    id="botonPreguntar"
-                    aria-label="Enviar pregunta"
-                >
-                    ➤
-                </button>
+                <!-- SUGERENCIAS -->
+
+                <div class="sugerencias">
+
+                    <button>
+                        🦖 ¿Cuál fue el dinosaurio más grande?
+                    </button>
+
+                    <button>
+                        🌊 ¿Qué reptiles vivían en el mar?
+                    </button>
+
+                    <button>
+                        🦣 ¿Qué era un mamut?
+                    </button>
+
+                    <button>
+                        🦕 ¿Cuándo vivieron los dinosaurios?
+                    </button>
+
+                </div>
+
+
+                <!-- CAJA DE TEXTO -->
+
+                <div class="entrada">
+
+                    <input
+                        type="text"
+                        id="pregunta"
+                        placeholder="¿Qué quieres descubrir?"
+                        autocomplete="off"
+                    >
+
+                    <button
+                        id="botonPreguntar"
+                        aria-label="Enviar pregunta"
+                    >
+                        ➤
+                    </button>
+
+                </div>
+
+
+                <div class="aviso-chat">
+                    PaleoIA puede cometer errores. Verifica los datos científicos importantes.
+                </div>
 
             </div>
-
-
-
-            <!-- ==================================
-                 SUGERENCIAS
-            =================================== -->
-
-            <div class="sugerencias">
-
-                <button>
-                    🦖 ¿Cuál fue el dinosaurio más grande?
-                </button>
-
-
-                <button>
-                    🌊 ¿Qué reptiles vivían en el mar?
-                </button>
-
-
-                <button>
-                    🦣 ¿Qué era un mamut?
-                </button>
-
-
-                <button>
-                    🦕 ¿Cuándo vivieron los dinosaurios?
-                </button>
-
-            </div>
-
 
         </section>
-
 
     </main>
 
 
-
     <!-- ==========================================
-         FOOTER
+         DECORACIÓN
     =========================================== -->
 
-    <footer>
+    <div class="hojas hojas-izquierda">
+        🌿🌿
+    </div>
 
-        <p>
-            🌿 PaleoIA — Explorando la historia de la vida
-        </p>
-
-        <span>
-            Las respuestas deberán verificarse
-            con fuentes científicas.
-        </span>
-
-    </footer>
-
+    <div class="hojas hojas-derecha">
+        🌿🌿
+    </div>
 
 
     <!-- ==========================================
@@ -459,8 +355,7 @@
 
                     PaleoIA intenta diferenciar entre
                     hechos científicos, estimaciones e
-                    hipótesis. Cuando un dato no es seguro,
-                    debe indicarlo.
+                    hipótesis.
 
                 </p>
 
@@ -496,7 +391,6 @@
     </div>
 
 
-
     <!-- ==========================================
          MODAL BORRAR
     =========================================== -->
@@ -515,26 +409,20 @@
                 😱🦖
             </div>
 
-
             <h2 id="tituloBorrar">
                 ¡¿Seguro que quieres borrar esta conversación?!
             </h2>
 
-
             <p id="textoBorrar">
-
                 Esta aventura prehistórica
                 desaparecerá para siempre. 🥺
-
             </p>
-
 
             <div class="modal-botones">
 
                 <button id="cancelarBorrar">
                     No, conservarla
                 </button>
-
 
                 <button id="confirmarBorrar">
                     Sí, borrarla
@@ -547,105 +435,6 @@
     </div>
 
 
-
-    <!-- ==========================================
-         MODAL MODO DESARROLLADOR
-    =========================================== -->
-
-    <div
-        id="modalDesarrollador"
-        class="modal-desarrollador"
-    >
-
-        <div class="panel-desarrollador">
-
-            <button
-                id="cerrarDesarrollador"
-                class="cerrar-desarrollador"
-                aria-label="Cerrar"
-            >
-                ×
-            </button>
-
-
-            <div class="dev-icon">
-                👨‍💻
-            </div>
-
-
-            <h2>
-                Modo desarrollador
-            </h2>
-
-
-            <p>
-                Accede al modo especial de PaleoIA.
-            </p>
-
-
-            <div id="loginDesarrollador">
-
-                <label for="passwordDesarrollador">
-                    Contraseña
-                </label>
-
-
-                <input
-                    id="passwordDesarrollador"
-                    type="password"
-                    placeholder="Introduce tu contraseña"
-                    autocomplete="current-password"
-                >
-
-
-                <button
-                    id="activarDesarrollador"
-                    class="dev-accion"
-                >
-                    Activar modo desarrollador
-                </button>
-
-
-                <p
-                    id="mensajeDesarrollador"
-                    class="mensaje-desarrollador"
-                ></p>
-
-            </div>
-
-
-            <div
-                id="panelActivoDesarrollador"
-                class="dev-activo"
-                hidden
-            >
-
-                <div class="dev-estado">
-                    ● MODO DESARROLLADOR ACTIVO
-                </div>
-
-
-                <p>
-                    Ahora puedes hacer preguntas
-                    sobre cualquier tema permitido.
-                </p>
-
-
-                <button
-                    id="desactivarDesarrollador"
-                    class="dev-salir"
-                >
-                    Cerrar sesión de desarrollador
-                </button>
-
-            </div>
-
-        </div>
-
-    </div>
-
-
-
     <!-- ==========================================
          JAVASCRIPT
     =========================================== -->
@@ -656,7 +445,7 @@
 
 
     <!-- ==========================================
-         ¿QUÉ ES PALEOIA?
+         MODAL INFO
     =========================================== -->
 
     <script>
@@ -671,70 +460,63 @@
             document.getElementById("cerrarInfo");
 
         const cerrarInfoBoton =
-            document.getElementById("cerrarInfoBoton");
+            document.getElementById(
+                "cerrarInfoBoton"
+            );
 
 
-        if (botonInfo && modalInfo) {
-
-            botonInfo.addEventListener("click", function () {
+        botonInfo.addEventListener(
+            "click",
+            () => {
 
                 modalInfo.hidden = false;
 
-            });
+            }
+        );
 
-        }
 
-
-        if (cerrarInfo) {
-
-            cerrarInfo.addEventListener("click", function () {
+        cerrarInfo.addEventListener(
+            "click",
+            () => {
 
                 modalInfo.hidden = true;
 
-            });
+            }
+        );
 
-        }
+
+        cerrarInfoBoton.addEventListener(
+            "click",
+            () => {
+
+                modalInfo.hidden = true;
+
+            }
+        );
 
 
-        if (cerrarInfoBoton) {
+        modalInfo.addEventListener(
+            "click",
+            (evento) => {
 
-            cerrarInfoBoton.addEventListener(
-                "click",
-                function () {
+                if (
+                    evento.target === modalInfo
+                ) {
 
                     modalInfo.hidden = true;
 
                 }
-            );
 
-        }
-
-
-        if (modalInfo) {
-
-            modalInfo.addEventListener(
-                "click",
-                function (evento) {
-
-                    if (evento.target === modalInfo) {
-
-                        modalInfo.hidden = true;
-
-                    }
-
-                }
-            );
-
-        }
+            }
+        );
 
 
         document.addEventListener(
             "keydown",
-            function (evento) {
+            (evento) => {
 
                 if (
                     evento.key === "Escape" &&
-                    modalInfo &&
                     !modalInfo.hidden
                 ) {
 
@@ -747,8 +529,6 @@
 
     </script>
 
-
 </body>
 
 </html>
-```
