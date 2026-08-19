@@ -1,4 +1,4 @@
- from fastapi import FastAPI
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 from google import genai
@@ -167,28 +167,26 @@ def activar_desarrollador(datos: LoginRequest):
             "mensaje": "❌ El modo desarrollador no está configurado."
         }
 
-
     if not secrets.compare_digest(
         datos.password,
         dev_password
     ):
 
-        print("⚠️ Intento de acceso de desarrollador rechazado")
+        print(
+            "⚠️ Intento de acceso de desarrollador rechazado"
+        )
 
         return {
             "exito": False,
             "mensaje": "❌ Contraseña incorrecta."
         }
 
-
     # Crear token aleatorio
     token = secrets.token_urlsafe(32)
 
     sesiones_desarrollador.add(token)
 
-
     print("🔓 MODO DESARROLLADOR ACTIVADO")
-
 
     return {
         "exito": True,
@@ -234,13 +232,16 @@ def preguntar(
 
     if not api_key:
 
-        print("❌ ERROR: GEMINI_API_KEY no encontrada")
+        print(
+            "❌ ERROR: GEMINI_API_KEY no encontrada"
+        )
 
         return {
             "pregunta": pregunta,
-            "respuesta":
+            "respuesta": (
                 "❌ PaleoIA no tiene configurada "
                 "su API de investigación."
+            )
         }
 
 
@@ -262,7 +263,6 @@ def preguntar(
         )
 
         print("👨‍💻 Modo desarrollador")
-
 
     else:
 
@@ -286,22 +286,16 @@ def preguntar(
             "de investigación..."
         )
 
-
         respuesta = client.models.generate_content(
-
             model="gemini-3.6-flash",
-
             contents=prompt
         )
 
-
         texto = respuesta.text
-
 
         print(
             "✅ Respuesta recibida correctamente"
         )
-
 
         return {
             "pregunta": pregunta,
@@ -320,8 +314,9 @@ def preguntar(
         print(repr(error))
         print("================================\n")
 
-
         return {
             "pregunta": pregunta,
-            "respuesta": f"❌ Error de Gemini: {str(error)}"
+            "respuesta": (
+                f"❌ Error de Gemini: {str(error)}"
+            )
         }
