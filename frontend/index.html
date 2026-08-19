@@ -6,12 +6,59 @@
 
     <meta charset="UTF-8">
 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>PaleoIA — Inteligencia artificial para explorar la prehistoria</title>
+
     <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
+        name="description"
+        content="PaleoIA es una inteligencia artificial especializada en paleontología, dinosaurios, animales prehistóricos y la historia de la vida en la Tierra."
     >
 
-    <title>PaleoIA | Explora el pasado</title>
+    <meta
+        name="robots"
+        content="index, follow"
+    >
+
+    <meta name="theme-color" content="#162b1b">
+
+    <link
+        rel="canonical"
+        href="https://josevalenblas.github.io/PaleoIA/"
+    >
+
+    <!-- Open Graph -->
+    <meta
+        property="og:title"
+        content="PaleoIA — Explora el pasado"
+    >
+
+    <meta
+        property="og:description"
+        content="Explora dinosaurios, mamíferos prehistóricos, reptiles marinos y la historia de la vida con PaleoIA."
+    >
+
+    <meta
+        property="og:type"
+        content="website"
+    >
+
+    <meta
+        property="og:url"
+        content="https://josevalenblas.github.io/PaleoIA/"
+    >
+
+    <!-- Datos para ayudar a Google a identificar el sitio -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "PaleoIA",
+        "alternateName": "Paleo IA",
+        "url": "https://josevalenblas.github.io/PaleoIA/",
+        "description": "Inteligencia artificial especializada en paleontología y animales prehistóricos."
+    }
+    </script>
 
     <link rel="stylesheet" href="style.css">
 
@@ -75,8 +122,6 @@
 
         <div class="header-botones">
 
-            <!-- BOTÓN ¿QUÉ ES PALEOIA? -->
-
             <button
                 class="boton-info"
                 id="botonInfo"
@@ -85,7 +130,11 @@
             </button>
 
 
-            <!-- BOTÓN DESARROLLADOR -->
+            <!--
+                El botón de desarrollador permanece
+                en el HTML por compatibilidad con dev.js.
+                Se oculta mediante CSS.
+            -->
 
             <button
                 id="botonDesarrollador"
@@ -123,6 +172,7 @@
         <div class="sidebar-logo">
 
             🦖
+
             <strong>
                 PaleoIA
             </strong>
@@ -134,9 +184,7 @@
             id="nuevoChat"
             class="nuevo-chat"
         >
-
             ＋ Nuevo chat
-
         </button>
 
 
@@ -147,9 +195,7 @@
             </p>
 
 
-            <div
-                id="listaConversaciones"
-            ></div>
+            <div id="listaConversaciones"></div>
 
         </div>
 
@@ -167,7 +213,6 @@
         <!-- HERO -->
 
         <section class="hero">
-
 
             <div class="ojo-ia">
                 ◉
@@ -195,7 +240,6 @@
 
             </p>
 
-
         </section>
 
 
@@ -207,11 +251,21 @@
         <section class="chat">
 
 
-            <div id="conversacion">
+            <!--
+                IMPORTANTE:
+
+                Esta caja ahora tiene una altura limitada.
+                Los mensajes antiguos se consultan
+                desplazándose dentro de ella.
+            -->
+
+            <div
+                id="conversacion"
+                class="conversacion-scroll"
+            >
 
 
                 <div class="mensaje ia">
-
 
                     <div class="avatar">
                         🦖
@@ -219,7 +273,6 @@
 
 
                     <div class="burbuja">
-
 
                         <strong>
                             PaleoIA
@@ -239,9 +292,7 @@
 
                         </p>
 
-
                     </div>
-
 
                 </div>
 
@@ -255,7 +306,6 @@
             =================================== -->
 
             <div class="entrada">
-
 
                 <input
                     type="text"
@@ -272,7 +322,6 @@
                     ➤
                 </button>
 
-
             </div>
 
 
@@ -282,7 +331,6 @@
             =================================== -->
 
             <div class="sugerencias">
-
 
                 <button>
                     🦖 ¿Cuál fue el dinosaurio más grande?
@@ -302,7 +350,6 @@
                 <button>
                     🦕 ¿Cuándo vivieron los dinosaurios?
                 </button>
-
 
             </div>
 
@@ -459,9 +506,7 @@
         class="modal-borrar"
     >
 
-
         <div class="modal-contenido">
-
 
             <div
                 id="dinoBorrar"
@@ -486,7 +531,6 @@
 
             <div class="modal-botones">
 
-
                 <button id="cancelarBorrar">
                     No, conservarla
                 </button>
@@ -496,12 +540,9 @@
                     Sí, borrarla
                 </button>
 
-
             </div>
 
-
         </div>
-
 
     </div>
 
@@ -516,9 +557,7 @@
         class="modal-desarrollador"
     >
 
-
         <div class="panel-desarrollador">
-
 
             <button
                 id="cerrarDesarrollador"
@@ -540,22 +579,13 @@
 
 
             <p>
-
-                Accede al modo especial
-                de PaleoIA.
-
+                Accede al modo especial de PaleoIA.
             </p>
 
 
-
-            <!-- LOGIN -->
-
             <div id="loginDesarrollador">
 
-
-                <label
-                    for="passwordDesarrollador"
-                >
+                <label for="passwordDesarrollador">
                     Contraseña
                 </label>
 
@@ -581,12 +611,8 @@
                     class="mensaje-desarrollador"
                 ></p>
 
-
             </div>
 
-
-
-            <!-- MODO ACTIVO -->
 
             <div
                 id="panelActivoDesarrollador"
@@ -594,17 +620,14 @@
                 hidden
             >
 
-
                 <div class="dev-estado">
                     ● MODO DESARROLLADOR ACTIVO
                 </div>
 
 
                 <p>
-
                     Ahora puedes hacer preguntas
                     sobre cualquier tema permitido.
-
                 </p>
 
 
@@ -615,101 +638,112 @@
                     Cerrar sesión de desarrollador
                 </button>
 
-
             </div>
 
-
         </div>
-
 
     </div>
 
 
 
     <!-- ==========================================
-         JAVASCRIPT ORIGINAL
+         JAVASCRIPT
     =========================================== -->
 
     <script src="script.js"></script>
-
-
-    <!-- ==========================================
-         JAVASCRIPT DESARROLLADOR
-    =========================================== -->
 
     <script src="dev.js"></script>
 
 
     <!-- ==========================================
-         JAVASCRIPT ¿QUÉ ES PALEOIA?
+         ¿QUÉ ES PALEOIA?
     =========================================== -->
 
     <script>
 
-        const botonInfo = document.getElementById("botonInfo");
+        const botonInfo =
+            document.getElementById("botonInfo");
 
-        const modalInfo = document.getElementById("modalInfo");
+        const modalInfo =
+            document.getElementById("modalInfo");
 
-        const cerrarInfo = document.getElementById("cerrarInfo");
+        const cerrarInfo =
+            document.getElementById("cerrarInfo");
 
         const cerrarInfoBoton =
             document.getElementById("cerrarInfoBoton");
 
 
-        // Abrir ventana
+        if (botonInfo && modalInfo) {
 
-        botonInfo.addEventListener("click", function () {
+            botonInfo.addEventListener("click", function () {
 
-            modalInfo.hidden = false;
+                modalInfo.hidden = false;
 
-        });
+            });
 
-
-        // Cerrar con X
-
-        cerrarInfo.addEventListener("click", function () {
-
-            modalInfo.hidden = true;
-
-        });
+        }
 
 
-        // Cerrar con botón
+        if (cerrarInfo) {
 
-        cerrarInfoBoton.addEventListener("click", function () {
-
-            modalInfo.hidden = true;
-
-        });
-
-
-        // Cerrar haciendo clic fuera de la ventana
-
-        modalInfo.addEventListener("click", function (evento) {
-
-            if (evento.target === modalInfo) {
+            cerrarInfo.addEventListener("click", function () {
 
                 modalInfo.hidden = true;
 
+            });
+
+        }
+
+
+        if (cerrarInfoBoton) {
+
+            cerrarInfoBoton.addEventListener(
+                "click",
+                function () {
+
+                    modalInfo.hidden = true;
+
+                }
+            );
+
+        }
+
+
+        if (modalInfo) {
+
+            modalInfo.addEventListener(
+                "click",
+                function (evento) {
+
+                    if (evento.target === modalInfo) {
+
+                        modalInfo.hidden = true;
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        document.addEventListener(
+            "keydown",
+            function (evento) {
+
+                if (
+                    evento.key === "Escape" &&
+                    modalInfo &&
+                    !modalInfo.hidden
+                ) {
+
+                    modalInfo.hidden = true;
+
+                }
+
             }
-
-        });
-
-
-        // Cerrar con Escape
-
-        document.addEventListener("keydown", function (evento) {
-
-            if (
-                evento.key === "Escape" &&
-                !modalInfo.hidden
-            ) {
-
-                modalInfo.hidden = true;
-
-            }
-
-        });
+        );
 
     </script>
 

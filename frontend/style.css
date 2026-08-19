@@ -1,38 +1,26 @@
- * {
-
+* {
     margin: 0;
-
     padding: 0;
-
-    box-sizing: border-box;
-
-}
+    box-sizing: border-box;}
 
 
 html {
-
     scroll-behavior: smooth;
-
 }
 
 
 body {
-
     font-family: Arial, sans-serif;
-
     min-height: 100vh;
 
     background:
-
         linear-gradient(
             rgba(20, 50, 30, 0.92),
             rgba(45, 70, 35, 0.95)
         );
 
     color: #f5f0d8;
-
     overflow-x: hidden;
-
 }
 
 
@@ -42,13 +30,10 @@ body {
 ========================================== */
 
 header {
-
     height: 80px;
 
     display: flex;
-
     align-items: center;
-
     justify-content: space-between;
 
     padding: 0 8%;
@@ -62,50 +47,35 @@ header {
     backdrop-filter: blur(10px);
 
     position: relative;
-
     z-index: 100;
-
 }
 
 
 .logo {
-
     display: flex;
-
     align-items: center;
-
     gap: 12px;
-
 }
 
 
 .logo-dino {
-
     font-size: 40px;
-
 }
 
 
 .logo h1 {
-
     font-size: 25px;
-
     color: #b7d67c;
-
 }
 
 
 .logo span {
-
     font-size: 12px;
-
     opacity: .7;
-
 }
 
 
 .boton-info {
-
     background: transparent;
 
     border:
@@ -120,15 +90,22 @@ header {
     cursor: pointer;
 
     transition: .2s;
-
 }
 
 
 .boton-info:hover {
-
     background:
         rgba(183,214,124,.15);
+}
 
+
+/*
+   El botón de desarrollador ya no aparece
+   visualmente.
+*/
+
+#botonDesarrollador {
+    display: none !important;
 }
 
 
@@ -138,7 +115,6 @@ header {
 ========================================== */
 
 .boton-menu {
-
     display: none;
 
     background: transparent;
@@ -152,7 +128,6 @@ header {
     cursor: pointer;
 
     padding: 5px;
-
 }
 
 
@@ -162,7 +137,6 @@ header {
 ========================================== */
 
 .hojas {
-
     position: fixed;
 
     font-size: 90px;
@@ -172,27 +146,20 @@ header {
     pointer-events: none;
 
     z-index: 0;
-
 }
 
 
 .hojas-izquierda {
-
     left: -20px;
-
     top: 100px;
-
 }
 
 
 .hojas-derecha {
-
     right: -20px;
-
     bottom: 100px;
 
     transform: scaleX(-1);
-
 }
 
 
@@ -202,13 +169,10 @@ header {
 ========================================== */
 
 .barra-lateral {
-
     position: fixed;
 
     left: 0;
-
     top: 80px;
-
     bottom: 0;
 
     width: 250px;
@@ -229,23 +193,19 @@ header {
 
     transition:
         transform .3s ease;
-
 }
 
 
 .sidebar-logo {
-
     font-size: 20px;
 
     color: #b7d67c;
 
     margin-bottom: 25px;
-
 }
 
 
 .nuevo-chat {
-
     width: 100%;
 
     padding: 12px 15px;
@@ -265,27 +225,21 @@ header {
     cursor: pointer;
 
     transition: .2s;
-
 }
 
 
 .nuevo-chat:hover {
-
     background:
         rgba(183,214,124,0.22);
-
 }
 
 
 .historial {
-
     margin-top: 30px;
-
 }
 
 
 .historial-titulo {
-
     font-size: 12px;
 
     text-transform: uppercase;
@@ -295,33 +249,26 @@ header {
     opacity: .5;
 
     margin-bottom: 12px;
-
 }
 
 
 #listaConversaciones {
-
     display: flex;
 
     flex-direction: column;
 
     gap: 6px;
-
 }
 
 
 #listaConversaciones button {
-
     transition: .2s;
-
 }
 
 
 #listaConversaciones button:hover {
-
     background:
         rgba(183,214,124,.15) !important;
-
 }
 
 
@@ -331,7 +278,6 @@ header {
 ========================================== */
 
 .fondo-menu {
-
     display: none;
 
     position: fixed;
@@ -344,14 +290,11 @@ header {
     backdrop-filter: blur(2px);
 
     z-index: 80;
-
 }
 
 
 .fondo-menu.activo {
-
     display: block;
-
 }
 
 
@@ -361,11 +304,9 @@ header {
 ========================================== */
 
 main {
-
     max-width: 900px;
 
     margin-left: 250px;
-
     margin-right: auto;
 
     padding: 70px 40px;
@@ -373,7 +314,6 @@ main {
     position: relative;
 
     z-index: 1;
-
 }
 
 
@@ -383,20 +323,15 @@ main {
 ========================================== */
 
 .hero {
-
     text-align: center;
-
 }
 
 
 .ojo-ia {
-
     width: 65px;
-
     height: 65px;
 
     margin: auto;
-
     margin-bottom: 20px;
 
     border-radius: 50%;
@@ -404,7 +339,6 @@ main {
     display: flex;
 
     align-items: center;
-
     justify-content: center;
 
     font-size: 30px;
@@ -416,28 +350,21 @@ main {
 
     box-shadow:
         0 0 20px rgba(183,214,124,.4);
-
 }
 
 
 .hero h2 {
-
     font-size: 45px;
-
     margin-bottom: 20px;
-
 }
 
 
 .hero h2 span {
-
     color: #b7d67c;
-
 }
 
 
 .hero p {
-
     max-width: 650px;
 
     margin: auto;
@@ -445,7 +372,6 @@ main {
     line-height: 1.7;
 
     opacity: .8;
-
 }
 
 
@@ -455,58 +381,111 @@ main {
 ========================================== */
 
 .chat {
-
     margin-top: 50px;
-
 }
 
 
-#conversacion {
+/*
+   CAMBIO PRINCIPAL:
 
+   El historial tiene una altura limitada.
+
+   Los mensajes nuevos NO hacen crecer
+   toda la página.
+
+   Se utiliza la rueda del mouse,
+   trackpad o dedo para consultar
+   mensajes anteriores.
+*/
+
+#conversacion {
     display: flex;
 
     flex-direction: column;
 
     gap: 18px;
 
+    height: 500px;
+
+    max-height: 60vh;
+
+    overflow-y: auto;
+
+    overflow-x: hidden;
+
+    padding: 8px 12px 20px 4px;
+
+    scroll-behavior: smooth;
+
+    scrollbar-width: thin;
+
+    scrollbar-color:
+        rgba(183,214,124,.55)
+        rgba(255,255,255,.05);
 }
 
 
-.mensaje {
+/*
+   Barra de desplazamiento para Chrome,
+   Edge y navegadores basados en Chromium.
+*/
 
+#conversacion::-webkit-scrollbar {
+    width: 8px;
+}
+
+
+#conversacion::-webkit-scrollbar-track {
+    background:
+        rgba(255,255,255,.04);
+
+    border-radius: 10px;
+}
+
+
+#conversacion::-webkit-scrollbar-thumb {
+    background:
+        rgba(183,214,124,.55);
+
+    border-radius: 10px;
+}
+
+
+#conversacion::-webkit-scrollbar-thumb:hover {
+    background:
+        rgba(183,214,124,.8);
+}
+
+
+
+.mensaje {
     display: flex;
 
     gap: 12px;
 
     width: 100%;
 
+    flex-shrink: 0;
 }
 
 
 .mensaje.ia {
-
     justify-content: flex-start;
-
 }
 
 
 .mensaje.usuario {
-
     justify-content: flex-end;
-
 }
 
 
 .avatar {
-
     width: 45px;
-
     height: 45px;
 
     display: flex;
 
     align-items: center;
-
     justify-content: center;
 
     font-size: 27px;
@@ -516,12 +495,10 @@ main {
     border-radius: 50%;
 
     flex-shrink: 0;
-
 }
 
 
 .burbuja {
-
     background:
         rgba(255,255,255,.08);
 
@@ -539,43 +516,34 @@ main {
     overflow-wrap: break-word;
 
     word-wrap: break-word;
-
 }
 
 
 .burbuja strong {
-
     color: #b7d67c;
 
     display: block;
 
     margin-bottom: 6px;
-
 }
 
 
 .burbuja p {
-
     margin: 0;
-
 }
 
 
 .burbuja p + p {
-
     margin-top: 8px;
-
 }
 
 
 .mensaje.usuario .burbuja {
-
     background:
         rgba(183,214,124,.18);
 
     border:
         1px solid rgba(183,214,124,.25);
-
 }
 
 
@@ -585,7 +553,6 @@ main {
 ========================================== */
 
 .entrada {
-
     margin-top: 30px;
 
     display: flex;
@@ -599,12 +566,10 @@ main {
     border-radius: 18px;
 
     padding: 8px;
-
 }
 
 
 .entrada input {
-
     flex: 1;
 
     min-width: 0;
@@ -620,22 +585,17 @@ main {
     padding: 15px;
 
     font-size: 16px;
-
 }
 
 
 .entrada input::placeholder {
-
     color:
         rgba(255,255,255,.5);
-
 }
 
 
 .entrada button {
-
     width: 50px;
-
     min-width: 50px;
 
     border: none;
@@ -649,14 +609,11 @@ main {
     font-size: 20px;
 
     transition: .2s;
-
 }
 
 
 .entrada button:hover {
-
     transform: scale(1.05);
-
 }
 
 
@@ -666,7 +623,6 @@ main {
 ========================================== */
 
 .sugerencias {
-
     display: flex;
 
     flex-wrap: wrap;
@@ -674,12 +630,10 @@ main {
     gap: 10px;
 
     margin-top: 15px;
-
 }
 
 
 .sugerencias button {
-
     background:
         rgba(255,255,255,.07);
 
@@ -695,15 +649,12 @@ main {
     cursor: pointer;
 
     transition: .2s;
-
 }
 
 
 .sugerencias button:hover {
-
     background:
         rgba(183,214,124,.2);
-
 }
 
 
@@ -713,7 +664,6 @@ main {
 ========================================== */
 
 footer {
-
     text-align: center;
 
     padding: 30px;
@@ -723,16 +673,12 @@ footer {
     font-size: 12px;
 
     margin-left: 250px;
-
 }
 
 
 footer span {
-
     display: block;
-
     margin-top: 5px;
-
 }
 
 
@@ -742,7 +688,6 @@ footer span {
 ========================================== */
 
 .modal-borrar {
-
     position: fixed;
 
     inset: 0;
@@ -750,7 +695,6 @@ footer span {
     display: none;
 
     align-items: center;
-
     justify-content: center;
 
     background:
@@ -761,19 +705,15 @@ footer span {
     z-index: 9999;
 
     padding: 20px;
-
 }
 
 
 .modal-borrar.activo {
-
     display: flex;
-
 }
 
 
 .modal-contenido {
-
     width: 100%;
 
     max-width: 430px;
@@ -785,7 +725,6 @@ footer span {
     border-radius: 22px;
 
     background:
-
         linear-gradient(
             145deg,
             #243f25,
@@ -800,32 +739,25 @@ footer span {
 
     animation:
         aparecerModal .2s ease;
-
 }
 
 
 .dino-sorprendido {
-
     font-size: 70px;
-
     margin-bottom: 15px;
-
 }
 
 
 .modal-contenido h2 {
-
     color: #b7d67c;
 
     font-size: 23px;
 
     margin-bottom: 12px;
-
 }
 
 
 .modal-contenido p {
-
     color: #f5f0d8;
 
     opacity: .75;
@@ -833,23 +765,19 @@ footer span {
     line-height: 1.6;
 
     margin-bottom: 25px;
-
 }
 
 
 .modal-botones {
-
     display: flex;
 
     gap: 10px;
 
     justify-content: center;
-
 }
 
 
 .modal-botones button {
-
     padding: 11px 18px;
 
     border-radius: 12px;
@@ -857,12 +785,10 @@ footer span {
     cursor: pointer;
 
     font-size: 14px;
-
 }
 
 
 #cancelarBorrar {
-
     background:
         rgba(255,255,255,.08);
 
@@ -870,12 +796,10 @@ footer span {
         1px solid rgba(255,255,255,.15);
 
     color: #f5f0d8;
-
 }
 
 
 #confirmarBorrar {
-
     background: #b7d67c;
 
     border: none;
@@ -883,41 +807,30 @@ footer span {
     color: #18251a;
 
     font-weight: bold;
-
 }
 
 
 #cancelarBorrar:hover {
-
     background:
         rgba(255,255,255,.15);
-
 }
 
 
 #confirmarBorrar:hover {
-
     transform: scale(1.03);
-
 }
 
 
 @keyframes aparecerModal {
 
     from {
-
         opacity: 0;
-
         transform: scale(.9);
-
     }
 
     to {
-
         opacity: 1;
-
         transform: scale(1);
-
     }
 
 }
@@ -930,67 +843,48 @@ footer span {
 
 @media(max-width: 700px) {
 
-
     body {
-
         min-width: 0;
-
     }
 
 
     header {
-
         height: 70px;
-
         padding: 0 18px;
-
     }
 
 
     .logo {
-
         gap: 8px;
-
     }
 
 
     .logo-dino {
-
         font-size: 32px;
-
     }
 
 
     .logo h1 {
-
         font-size: 21px;
-
     }
 
 
     .logo span {
-
         font-size: 10px;
-
     }
 
 
     .boton-info {
-
         display: none;
-
     }
 
 
     .boton-menu {
-
         display: block;
-
     }
 
 
     .barra-lateral {
-
         top: 70px;
 
         width: 280px;
@@ -999,19 +893,15 @@ footer span {
 
         box-shadow:
             15px 0 35px rgba(0,0,0,.35);
-
     }
 
 
     .barra-lateral.activo {
-
         transform: translateX(0);
-
     }
 
 
     main {
-
         width: 100%;
 
         max-width: none;
@@ -1020,160 +910,129 @@ footer span {
 
         padding:
             45px 18px 35px;
-
     }
 
 
     footer {
-
         margin-left: 0;
-
         padding: 25px 18px;
-
     }
 
 
     .hero h2 {
-
         font-size: 32px;
-
         line-height: 1.2;
-
     }
 
 
     .hero p {
-
         font-size: 14px;
-
         line-height: 1.6;
-
     }
 
 
     .ojo-ia {
-
         width: 55px;
-
         height: 55px;
-
         font-size: 25px;
-
     }
 
 
     .chat {
-
         margin-top: 35px;
+    }
 
+
+    /*
+       En celular el historial ocupa
+       una parte cómoda de la pantalla.
+    */
+
+    #conversacion {
+        height: 52vh;
+
+        max-height: 520px;
+
+        min-height: 300px;
+
+        padding-right: 8px;
     }
 
 
     .mensaje {
-
         gap: 8px;
-
     }
 
 
     .avatar {
-
         width: 38px;
-
         height: 38px;
-
         font-size: 23px;
-
     }
 
 
     .burbuja {
-
-        max-width: calc(100% - 46px);
+        max-width:
+            calc(100% - 46px);
 
         padding: 13px;
 
         font-size: 14px;
-
     }
 
 
     .mensaje.usuario .burbuja {
-
         max-width: 85%;
-
     }
 
 
     .entrada {
-
         margin-top: 22px;
 
         padding: 6px;
 
         border-radius: 15px;
-
     }
 
 
     .entrada input {
-
         padding: 12px 10px;
-
         font-size: 15px;
-
     }
 
 
     .entrada button {
-
         width: 44px;
-
         min-width: 44px;
-
         font-size: 18px;
-
     }
 
 
     .sugerencias {
-
         gap: 7px;
-
     }
 
 
     .sugerencias button {
-
         font-size: 12px;
-
         padding: 8px 10px;
-
     }
 
 
     .modal-contenido {
-
         max-width: 100%;
-
         padding: 25px 20px;
-
     }
 
 
     .modal-contenido h2 {
-
         font-size: 20px;
-
     }
 
 
     .dino-sorprendido {
-
         font-size: 58px;
-
     }
-
 
 }
 
@@ -1185,26 +1044,25 @@ footer span {
 
 @media(max-width: 380px) {
 
-
     .logo span {
-
         display: none;
-
     }
 
 
     .hero h2 {
-
         font-size: 28px;
-
     }
 
 
     .sugerencias button {
-
         width: 100%;
-
     }
 
 
+    #conversacion {
+        height: 50vh;
+        min-height: 280px;
+    }
+
 }
+
