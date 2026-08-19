@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 
 <head>
@@ -14,6 +14,8 @@
 
     <link rel="stylesheet" href="style.css">
 
+    <link rel="stylesheet" href="dev.css">
+
 </head>
 
 
@@ -21,7 +23,7 @@
 
 
     <!-- ==========================================
-         HOJAS DECORATIVAS
+         DECORACIÓN
     =========================================== -->
 
     <div class="hojas hojas-izquierda">
@@ -61,31 +63,42 @@
         </div>
 
 
-        <!-- BOTÓN MENÚ CELULAR -->
-
         <button
             id="botonMenu"
             class="boton-menu"
             aria-label="Abrir menú"
         >
-
             ☰
-
         </button>
 
 
-        <button class="boton-info">
+        <div class="header-botones">
 
-            ¿Qué es PaleoIA?
+            <button
+                class="boton-info"
+                id="botonInfo"
+            >
+                ¿Qué es PaleoIA?
+            </button>
 
-        </button>
+
+            <!-- BOTÓN DESARROLLADOR -->
+
+            <button
+                id="botonDesarrollador"
+                class="boton-desarrollador"
+            >
+                👨‍💻 Desarrollador
+            </button>
+
+        </div>
 
     </header>
 
 
 
     <!-- ==========================================
-         FONDO DEL MENÚ MÓVIL
+         FONDO DEL MENÚ
     =========================================== -->
 
     <div
@@ -107,7 +120,6 @@
         <div class="sidebar-logo">
 
             🦖
-
             <strong>
                 PaleoIA
             </strong>
@@ -128,15 +140,13 @@
         <div class="historial">
 
             <p class="historial-titulo">
-
                 Conversaciones
-
             </p>
 
 
-            <div id="listaConversaciones">
-
-            </div>
+            <div
+                id="listaConversaciones"
+            ></div>
 
         </div>
 
@@ -151,16 +161,13 @@
     <main>
 
 
-        <!-- ==========================================
-             PRESENTACIÓN
-        =========================================== -->
+        <!-- HERO -->
 
         <section class="hero">
 
+
             <div class="ojo-ia">
-
                 ◉
-
             </div>
 
 
@@ -185,13 +192,14 @@
 
             </p>
 
+
         </section>
 
 
 
-        <!-- ==========================================
+        <!-- ======================================
              CHAT
-        =========================================== -->
+        ======================================= -->
 
         <section class="chat">
 
@@ -199,18 +207,16 @@
             <div id="conversacion">
 
 
-                <!-- MENSAJE INICIAL -->
-
                 <div class="mensaje ia">
 
+
                     <div class="avatar">
-
                         🦖
-
                     </div>
 
 
                     <div class="burbuja">
+
 
                         <strong>
                             PaleoIA
@@ -230,19 +236,23 @@
 
                         </p>
 
+
                     </div>
 
+
                 </div>
+
 
             </div>
 
 
 
-            <!-- ==========================================
+            <!-- ==================================
                  ENTRADA
-            =========================================== -->
+            =================================== -->
 
             <div class="entrada">
+
 
                 <input
                     type="text"
@@ -256,47 +266,38 @@
                     id="botonPreguntar"
                     aria-label="Enviar pregunta"
                 >
-
                     ➤
-
                 </button>
+
 
             </div>
 
 
 
-            <!-- ==========================================
+            <!-- ==================================
                  SUGERENCIAS
-            =========================================== -->
+            =================================== -->
 
             <div class="sugerencias">
 
 
                 <button>
-
                     🦖 ¿Cuál fue el dinosaurio más grande?
-
                 </button>
 
 
                 <button>
-
-                    🌊 ¿Qué dinosaurios vivían en el mar?
-
+                    🌊 ¿Qué reptiles vivían en el mar?
                 </button>
 
 
                 <button>
-
                     🦣 ¿Qué era un mamut?
-
                 </button>
 
 
                 <button>
-
                     🦕 ¿Cuándo vivieron los dinosaurios?
-
                 </button>
 
 
@@ -317,17 +318,12 @@
     <footer>
 
         <p>
-
             🌿 PaleoIA — Explorando la historia de la vida
-
         </p>
 
-
         <span>
-
             Las respuestas deberán verificarse
             con fuentes científicas.
-
         </span>
 
     </footer>
@@ -335,13 +331,14 @@
 
 
     <!-- ==========================================
-         MODAL DE BORRADO
+         MODAL BORRAR
     =========================================== -->
 
     <div
         id="modalBorrar"
         class="modal-borrar"
     >
+
 
         <div class="modal-contenido">
 
@@ -350,17 +347,12 @@
                 id="dinoBorrar"
                 class="dino-sorprendido"
             >
-
                 😱🦖
-
             </div>
 
 
             <h2 id="tituloBorrar">
-
-                ¡¿Seguro que quieres borrar
-                esta conversación?!
-
+                ¡¿Seguro que quieres borrar esta conversación?!
             </h2>
 
 
@@ -376,16 +368,12 @@
 
 
                 <button id="cancelarBorrar">
-
                     No, conservarla
-
                 </button>
 
 
                 <button id="confirmarBorrar">
-
                     Sí, borrarla
-
                 </button>
 
 
@@ -394,11 +382,142 @@
 
         </div>
 
+
     </div>
 
 
 
+    <!-- ==========================================
+         MODAL MODO DESARROLLADOR
+    =========================================== -->
+
+    <div
+        id="modalDesarrollador"
+        class="modal-desarrollador"
+    >
+
+
+        <div class="panel-desarrollador">
+
+
+            <button
+                id="cerrarDesarrollador"
+                class="cerrar-desarrollador"
+                aria-label="Cerrar"
+            >
+                ×
+            </button>
+
+
+            <div class="dev-icon">
+                👨‍💻
+            </div>
+
+
+            <h2>
+                Modo desarrollador
+            </h2>
+
+
+            <p>
+
+                Accede al modo especial
+                de PaleoIA.
+
+            </p>
+
+
+
+            <!-- LOGIN -->
+
+            <div id="loginDesarrollador">
+
+
+                <label
+                    for="passwordDesarrollador"
+                >
+                    Contraseña
+                </label>
+
+
+                <input
+                    id="passwordDesarrollador"
+                    type="password"
+                    placeholder="Introduce tu contraseña"
+                    autocomplete="current-password"
+                >
+
+
+                <button
+                    id="activarDesarrollador"
+                    class="dev-accion"
+                >
+                    Activar modo desarrollador
+                </button>
+
+
+                <p
+                    id="mensajeDesarrollador"
+                    class="mensaje-desarrollador"
+                ></p>
+
+
+            </div>
+
+
+
+            <!-- MODO ACTIVO -->
+
+            <div
+                id="panelActivoDesarrollador"
+                class="dev-activo"
+                hidden
+            >
+
+
+                <div class="dev-estado">
+                    ● MODO DESARROLLADOR ACTIVO
+                </div>
+
+
+                <p>
+
+                    Ahora puedes hacer preguntas
+                    sobre cualquier tema permitido.
+
+                </p>
+
+
+                <button
+                    id="desactivarDesarrollador"
+                    class="dev-salir"
+                >
+                    Cerrar sesión de desarrollador
+                </button>
+
+
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- ==========================================
+         JAVASCRIPT ORIGINAL
+    =========================================== -->
+
     <script src="script.js"></script>
+
+
+    <!-- ==========================================
+         JAVASCRIPT DESARROLLADOR
+    =========================================== -->
+
+    <script src="dev.js"></script>
 
 
 </body>

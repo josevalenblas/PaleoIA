@@ -1,0 +1,525 @@
+/* ==========================================
+   BOTÓN DESARROLLADOR
+========================================== */
+
+.boton-desarrollador {
+
+    margin-left: 10px;
+
+    padding: 10px 16px;
+
+    border-radius: 20px;
+
+    border: 1px solid #b7d67c;
+
+    background: rgba(183,214,124,.08);
+
+    color: #b7d67c;
+
+    cursor: pointer;
+
+    font-size: 14px;
+
+    transition: .2s;
+
+}
+
+
+.boton-desarrollador:hover {
+
+    background: rgba(183,214,124,.20);
+
+    transform: translateY(-1px);
+
+}
+
+
+
+/* ==========================================
+   MODAL DESARROLLADOR
+========================================== */
+
+.modal-desarrollador {
+
+    position: fixed;
+
+    inset: 0;
+
+    display: none;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+
+    background: rgba(0,0,0,.72);
+
+    backdrop-filter: blur(8px);
+
+    z-index: 10000;
+
+}
+
+
+.modal-desarrollador.activo {
+
+    display: flex;
+
+}
+
+
+
+/* ==========================================
+   PANEL
+========================================== */
+
+.panel-desarrollador {
+
+    position: relative;
+
+    width: 100%;
+
+    max-width: 430px;
+
+    padding: 35px;
+
+    border-radius: 24px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #243f25,
+            #122419
+        );
+
+    border: 1px solid rgba(183,214,124,.45);
+
+    box-shadow:
+        0 25px 80px rgba(0,0,0,.65);
+
+    text-align: center;
+
+    animation:
+        aparecerDev .2s ease;
+
+}
+
+
+@keyframes aparecerDev {
+
+    from {
+
+        opacity: 0;
+
+        transform: scale(.9)
+                   translateY(20px);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform: scale(1)
+                   translateY(0);
+
+    }
+
+}
+
+
+
+/* ==========================================
+   ICONO
+========================================== */
+
+.dev-icon {
+
+    width: 75px;
+
+    height: 75px;
+
+    margin: 0 auto 18px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #182f1d;
+
+    border: 2px solid #b7d67c;
+
+    font-size: 35px;
+
+    box-shadow:
+        0 0 25px rgba(183,214,124,.25);
+
+}
+
+
+
+/* ==========================================
+   TITULO
+========================================== */
+
+.panel-desarrollador h2 {
+
+    margin-bottom: 10px;
+
+    color: #b7d67c;
+
+    font-size: 26px;
+
+}
+
+
+.panel-desarrollador > p {
+
+    margin-bottom: 25px;
+
+    color: #f5f0d8;
+
+    opacity: .7;
+
+    line-height: 1.5;
+
+}
+
+
+
+/* ==========================================
+   CERRAR
+========================================== */
+
+.cerrar-desarrollador {
+
+    position: absolute;
+
+    top: 15px;
+
+    right: 18px;
+
+    width: 35px;
+
+    height: 35px;
+
+    border: none;
+
+    border-radius: 50%;
+
+    background: transparent;
+
+    color: #f5f0d8;
+
+    font-size: 28px;
+
+    line-height: 30px;
+
+    cursor: pointer;
+
+    transition: .2s;
+
+}
+
+
+.cerrar-desarrollador:hover {
+
+    background: rgba(255,255,255,.1);
+
+}
+
+
+
+/* ==========================================
+   LABEL
+========================================== */
+
+.panel-desarrollador label {
+
+    display: block;
+
+    margin-bottom: 8px;
+
+    text-align: left;
+
+    color: #b7d67c;
+
+    font-size: 14px;
+
+}
+
+
+
+/* ==========================================
+   CONTRASEÑA
+========================================== */
+
+#passwordDesarrollador {
+
+    width: 100%;
+
+    padding: 14px 15px;
+
+    margin-bottom: 14px;
+
+    border-radius: 12px;
+
+    border: 1px solid rgba(255,255,255,.15);
+
+    outline: none;
+
+    background: rgba(255,255,255,.08);
+
+    color: white;
+
+    font-size: 15px;
+
+}
+
+
+#passwordDesarrollador:focus {
+
+    border-color: #b7d67c;
+
+    box-shadow:
+        0 0 0 2px
+        rgba(183,214,124,.12);
+
+}
+
+
+#passwordDesarrollador::placeholder {
+
+    color: rgba(255,255,255,.4);
+
+}
+
+
+
+/* ==========================================
+   BOTÓN ACTIVAR
+========================================== */
+
+.dev-accion {
+
+    width: 100%;
+
+    padding: 13px;
+
+    border: none;
+
+    border-radius: 12px;
+
+    background: #b7d67c;
+
+    color: #18251a;
+
+    font-size: 15px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition: .2s;
+
+}
+
+
+.dev-accion:hover {
+
+    transform: translateY(-1px);
+
+    filter: brightness(1.05);
+
+}
+
+
+.dev-accion:disabled {
+
+    opacity: .6;
+
+    cursor: wait;
+
+}
+
+
+
+/* ==========================================
+   MENSAJE
+========================================== */
+
+.mensaje-desarrollador {
+
+    min-height: 22px;
+
+    margin-top: 14px;
+
+    margin-bottom: 0 !important;
+
+    font-size: 14px;
+
+    color: #f5f0d8;
+
+}
+
+
+.mensaje-desarrollador.error {
+
+    color: #ff9999;
+
+}
+
+
+.mensaje-desarrollador.exito {
+
+    color: #b7d67c;
+
+}
+
+
+
+/* ==========================================
+   MODO ACTIVO
+========================================== */
+
+.dev-activo {
+
+    margin-top: 20px;
+
+}
+
+
+.dev-estado {
+
+    padding: 12px;
+
+    border-radius: 12px;
+
+    background:
+        rgba(183,214,124,.12);
+
+    border:
+        1px solid
+        rgba(183,214,124,.3);
+
+    color: #b7d67c;
+
+    font-size: 13px;
+
+    font-weight: bold;
+
+    letter-spacing: .5px;
+
+}
+
+
+.dev-activo p {
+
+    margin: 18px 0;
+
+    color: #f5f0d8;
+
+    opacity: .75;
+
+    line-height: 1.5;
+
+}
+
+
+
+/* ==========================================
+   CERRAR SESIÓN
+========================================== */
+
+.dev-salir {
+
+    width: 100%;
+
+    padding: 12px;
+
+    border-radius: 12px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.15);
+
+    background:
+        rgba(255,255,255,.07);
+
+    color: #f5f0d8;
+
+    cursor: pointer;
+
+    transition: .2s;
+
+}
+
+
+.dev-salir:hover {
+
+    background:
+        rgba(255,255,255,.13);
+
+}
+
+
+
+/* ==========================================
+   ESTADO DEL BOTÓN
+========================================== */
+
+.boton-desarrollador.activo {
+
+    background:
+        rgba(183,214,124,.2);
+
+    box-shadow:
+        0 0 15px
+        rgba(183,214,124,.18);
+
+}
+
+
+
+/* ==========================================
+   CELULAR
+========================================== */
+
+@media(max-width: 700px) {
+
+    .boton-desarrollador {
+
+        display: block;
+
+        margin: 8px 0 0;
+
+        width: 100%;
+
+    }
+
+
+    .header-botones {
+
+        display: flex;
+
+        flex-direction: column;
+
+        align-items: stretch;
+
+    }
+
+
+    .panel-desarrollador {
+
+        padding: 30px 22px;
+
+        max-width: 380px;
+
+    }
+
+}
