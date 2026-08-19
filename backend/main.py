@@ -5,17 +5,21 @@ from google import genai
 from pydantic import BaseModel
 import os
 import secrets
+import time
 
 
 # ==========================================
-# CARGAR VARIABLES DE ENTORNO
+# VARIABLES DE ENTORNO
 # ==========================================
 
 load_dotenv()
 
+api_key = os.getenv("GEMINI_API_KEY")
+dev_password = os.getenv("PALEOIA_DEV_PASSWORD")
+
 
 # ==========================================
-# CREAR APLICACIÓN
+# APLICACIÓN
 # ==========================================
 
 app = FastAPI()
@@ -35,21 +39,11 @@ app.add_middleware(
 
 
 # ==========================================
-# VARIABLES DE ENTORNO
-# ==========================================
-
-api_key = os.getenv("GEMINI_API_KEY")
-dev_password = os.getenv("PALEOIA_DEV_PASSWORD")
-
-
-# ==========================================
-# CLIENTE GEMINI
+# GEMINI
 # ==========================================
 
 if api_key:
-    client = genai.Client(
-        api_key=api_key
-    )
+    client = genai.Client(api_key=api_key)
 else:
     client = None
 
@@ -62,7 +56,7 @@ sesiones_desarrollador = set()
 
 
 # ==========================================
-# PERSONALIDAD NORMAL DE PALEOIA
+# PALEOIA NORMAL
 # ==========================================
 
 SYSTEM_PROMPT = """
@@ -103,36 +97,40 @@ dilo claramente.
 
 Explica los conceptos de forma sencilla
 pero científicamente correcta.
+
+Sé directo y evita respuestas
+innecesariamente largas.
 """
 
 
 # ==========================================
-# PERSONALIDAD DESARROLLADOR
+# MODO DESARROLLADOR
 # ==========================================
 
 DEVELOPER_PROMPT = """
 Eres PaleoIA en MODO DESARROLLADOR.
 
-El usuario ha sido autenticado como
+El usuario está autenticado como
 desarrollador.
 
 En este modo puedes responder preguntas
 sobre cualquier tema permitido y no estás
 limitado exclusivamente a paleontología.
 
-Mantén siempre una respuesta clara,
-útil y científicamente responsable.
+Responde siempre en español.
+
+Sé claro, directo y útil.
 
 Cuando una pregunta sea científica,
 diferencia entre hechos, estimaciones
 e hipótesis cuando sea necesario.
 
-Responde siempre en español.
+No inventes fuentes ni información.
 """
 
 
 # ==========================================
-# MODELO PARA LOGIN
+# LOGIN
 # ==========================================
 
 class LoginRequest(BaseModel):
@@ -172,16 +170,13 @@ def activar_desarrollador(datos: LoginRequest):
         dev_password
     ):
 
-        print(
-            "⚠️ Intento de acceso de desarrollador rechazado"
-        )
+        print("⚠️ Intento de acceso rechazado")
 
         return {
             "exito": False,
             "mensaje": "❌ Contraseña incorrecta."
         }
 
-    # Crear token aleatorio
     token = secrets.token_urlsafe(32)
 
     sesiones_desarrollador.add(token)
@@ -225,33 +220,23 @@ def preguntar(
     print(pregunta)
     print("================================")
 
-
     # ======================================
-    # COMPROBAR API KEY
+    # COMPROBAR API
     # ======================================
 
-    if not api_key:
-
-        print(
-            "❌ ERROR: GEMINI_API_KEY no encontrada"
-        )
+    if not api_key or client is None:
 
         return {
             "pregunta": pregunta,
-            "respuesta": (
-                "❌ PaleoIA no tiene configurada "
-                "su API de investigación."
-            )
+            "respuesta": "❌ PaleoIA no tiene configurada su API."
         }
 
 
     # ======================================
-    # COMPROBAR MODO DESARROLLADOR
+    # COMPROBAR MODO
     # ======================================
 
-    modo_desarrollador = (
-        token in sesiones_desarrollador
-    )
+    modo_desarrollador = token in sesiones_desarrollador
 
 
     if modo_desarrollador:
@@ -276,47 +261,83 @@ def preguntar(
 
 
     # ======================================
-    # CONECTAR CON GEMINI
+    # GEMINI
     # ======================================
 
-    try:
+    for intento in range(3):
 
-        print(
-            "🧠 Conectando con el cerebro "
-            "de investigación..."
-        )
+        try:
 
-        respuesta = client.models.generate_content(
-            model="gemini-3.6-flash",
-            contents=prompt
-        )
-
-        texto = respuesta.text
-
-        print(
-            "✅ Respuesta recibida correctamente"
-        )
-
-        return {
-            "pregunta": pregunta,
-            "respuesta": texto,
-            "modo_desarrollador": modo_desarrollador
-        }
-
-
-    # ======================================
-    # ERROR
-    # ======================================
-
-    except Exception as error:
-
-        print("\n❌ ERROR DE GEMINI:")
-        print(repr(error))
-        print("================================\n")
-
-        return {
-            "pregunta": pregunta,
-            "respuesta": (
-                f"❌ Error de Gemini: {str(error)}"
+            print(
+                f"🧠 Consultando Gemini "
+                f"(intento {intento + 1}/3)..."
             )
-        }
+
+            respuesta = client.models.generate_content(
+
+                model="gemini-2.5-flash",
+
+                contents=prompt
+            )
+
+            texto = respuesta.text
+
+            print("✅ Respuesta recibida")
+
+            return {
+                "pregunta": pregunta,
+                "respuesta": texto,
+                "modo_desarrollador": modo_desarrollador
+            }
+
+
+        except Exception as error:
+
+            error_texto = str(error)
+
+            print("❌ Error de Gemini:")
+            print(error_texto)
+
+
+            # ==================================
+            # REINTENTAR SI GEMINI ESTÁ OCUPADO
+            # ==================================
+
+            if "503" in error_texto or "UNAVAILABLE" in error_texto:
+
+                if intento < 2:
+
+                    print("⏳ Gemini está ocupado. Reintentando...")
+
+                    time.sleep(1)
+
+                    continue
+
+                return {
+                    "pregunta": pregunta,
+                    "respuesta":
+                        "⚠️ Gemini está recibiendo muchas "
+                        "solicitudes en este momento. "
+                        "Intenta nuevamente en unos segundos.",
+                    "modo_desarrollador": modo_desarrollador
+                }
+
+
+            # ==================================
+            # OTROS ERRORES
+            # ==================================
+
+            return {
+                "pregunta": pregunta,
+                "respuesta":
+                    "❌ Ocurrió un error al consultar "
+                    "el cerebro de PaleoIA.",
+                "modo_desarrollador": modo_desarrollador
+            }
+
+
+    return {
+        "pregunta": pregunta,
+        "respuesta": "❌ No se pudo obtener una respuesta.",
+        "modo_desarrollador": modo_desarrollador
+    }
