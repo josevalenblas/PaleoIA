@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="es">
 
@@ -73,6 +74,8 @@
 
 
         <div class="header-botones">
+
+            <!-- BOTÓN ¿QUÉ ES PALEOIA? -->
 
             <button
                 class="boton-info"
@@ -331,6 +334,123 @@
 
 
     <!-- ==========================================
+         MODAL ¿QUÉ ES PALEOIA?
+    =========================================== -->
+
+    <div
+        id="modalInfo"
+        class="modal-info"
+        hidden
+    >
+
+        <div class="info-contenido">
+
+            <button
+                id="cerrarInfo"
+                class="cerrar-info"
+                aria-label="Cerrar"
+            >
+                ×
+            </button>
+
+
+            <div class="info-icon">
+                🦖
+            </div>
+
+
+            <h2>
+                ¿Qué es PaleoIA?
+            </h2>
+
+
+            <p>
+
+                <strong>PaleoIA</strong> es una inteligencia
+                artificial creada para ayudarte a explorar
+                el mundo de la paleontología y la vida
+                prehistórica.
+
+            </p>
+
+
+            <p>
+
+                Puedes preguntarle sobre dinosaurios,
+                pterosaurios, reptiles marinos, mamíferos
+                prehistóricos, peces, anfibios, artrópodos
+                y muchos otros animales extintos.
+
+            </p>
+
+
+            <div class="info-seccion">
+
+                <h3>
+                    🧠 ¿Cómo funciona?
+                </h3>
+
+                <p>
+
+                    PaleoIA recibe tu pregunta y utiliza
+                    inteligencia artificial para generar
+                    una respuesta en español de forma
+                    clara y comprensible.
+
+                </p>
+
+            </div>
+
+
+            <div class="info-seccion">
+
+                <h3>
+                    🔬 Ciencia primero
+                </h3>
+
+                <p>
+
+                    PaleoIA intenta diferenciar entre
+                    hechos científicos, estimaciones e
+                    hipótesis. Cuando un dato no es seguro,
+                    debe indicarlo.
+
+                </p>
+
+            </div>
+
+
+            <div class="info-seccion">
+
+                <h3>
+                    🌎 Explora el pasado
+                </h3>
+
+                <p>
+
+                    Su objetivo es hacer que aprender
+                    sobre la historia de la vida sea
+                    sencillo, entretenido y educativo.
+
+                </p>
+
+            </div>
+
+
+            <button
+                id="cerrarInfoBoton"
+                class="boton-cerrar-info"
+            >
+                Entendido
+            </button>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ==========================================
          MODAL BORRAR
     =========================================== -->
 
@@ -520,6 +640,81 @@
     <script src="dev.js"></script>
 
 
+    <!-- ==========================================
+         JAVASCRIPT ¿QUÉ ES PALEOIA?
+    =========================================== -->
+
+    <script>
+
+        const botonInfo = document.getElementById("botonInfo");
+
+        const modalInfo = document.getElementById("modalInfo");
+
+        const cerrarInfo = document.getElementById("cerrarInfo");
+
+        const cerrarInfoBoton =
+            document.getElementById("cerrarInfoBoton");
+
+
+        // Abrir ventana
+
+        botonInfo.addEventListener("click", function () {
+
+            modalInfo.hidden = false;
+
+        });
+
+
+        // Cerrar con X
+
+        cerrarInfo.addEventListener("click", function () {
+
+            modalInfo.hidden = true;
+
+        });
+
+
+        // Cerrar con botón
+
+        cerrarInfoBoton.addEventListener("click", function () {
+
+            modalInfo.hidden = true;
+
+        });
+
+
+        // Cerrar haciendo clic fuera de la ventana
+
+        modalInfo.addEventListener("click", function (evento) {
+
+            if (evento.target === modalInfo) {
+
+                modalInfo.hidden = true;
+
+            }
+
+        });
+
+
+        // Cerrar con Escape
+
+        document.addEventListener("keydown", function (evento) {
+
+            if (
+                evento.key === "Escape" &&
+                !modalInfo.hidden
+            ) {
+
+                modalInfo.hidden = true;
+
+            }
+
+        });
+
+    </script>
+
+
 </body>
 
 </html>
+```
