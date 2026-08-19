@@ -1301,3 +1301,229 @@ main {
     }
 
 }
+/* =====================================================
+   ELEMENTOS DEL HISTORIAL
+===================================================== */
+
+.conversacion-item {
+
+    display: flex;
+
+    width: 100%;
+
+    gap: 6px;
+
+    align-items: stretch;
+}
+
+
+.boton-conversacion {
+
+    flex: 1;
+
+    min-width: 0;
+
+    padding: 10px;
+
+    border:
+        1px solid
+        rgba(255,255,255,.08);
+
+    border-radius: 10px;
+
+    background:
+        rgba(255,255,255,.04);
+
+    color: #f5f0d8;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    white-space: nowrap;
+
+    transition:
+        background .15s ease,
+        border .15s ease;
+}
+
+
+.boton-conversacion:hover {
+
+    background:
+        rgba(183,214,124,.12);
+
+    border-color:
+        rgba(183,214,124,.25);
+}
+
+
+.boton-conversacion.seleccionado {
+
+    background:
+        rgba(183,214,124,.16);
+
+    border-color:
+        rgba(183,214,124,.35);
+}
+
+
+/* =====================================================
+   BOTÓN ELIMINAR
+===================================================== */
+
+.boton-borrar-chat {
+
+    width: 42px;
+
+    min-width: 42px;
+
+    padding: 0;
+
+    border:
+        1px solid
+        rgba(255,100,100,.25);
+
+    border-radius: 10px;
+
+    background:
+        rgba(255,70,70,.08);
+
+    color: #ffb4b4;
+
+    cursor: pointer;
+
+    font-size: 16px;
+
+    transition:
+        background .15s ease,
+        transform .15s ease;
+}
+
+
+.boton-borrar-chat:hover {
+
+    background:
+        rgba(255,70,70,.22);
+
+    transform:
+        scale(1.04);
+}
+
+
+.boton-borrar-chat:active {
+
+    transform:
+        scale(.96);
+}
+
+
+/* =====================================================
+   MODAL BORRAR
+===================================================== */
+
+.modal-borrar {
+
+    display: none;
+
+    position: fixed;
+
+    inset: 0;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+
+    background:
+        rgba(0,0,0,.65);
+
+    backdrop-filter:
+        blur(7px);
+
+    z-index: 9999;
+}
+
+
+.modal-borrar.activo {
+
+    display: flex;
+}
+
+
+.modal-borrar .modal-contenido {
+
+    width: 100%;
+
+    max-width: 480px;
+
+    padding: 30px;
+
+    border-radius: 22px;
+
+    background:
+        linear-gradient(
+            145deg,
+            #243f25,
+            #162b1b
+        );
+
+    border:
+        1px solid
+        rgba(183,214,124,.35);
+
+    box-shadow:
+        0 20px 60px
+        rgba(0,0,0,.55);
+}
+
+
+.modal-botones {
+
+    display: flex;
+
+    gap: 10px;
+}
+
+
+.modal-botones button {
+
+    flex: 1;
+
+    min-height: 44px;
+
+    border-radius: 12px;
+
+    cursor: pointer;
+}
+
+
+#cancelarBorrar:hover {
+
+    background:
+        rgba(255,255,255,.14);
+}
+
+
+#confirmarBorrar:hover {
+
+    filter: brightness(1.08);
+}
+
+
+@media(max-width: 700px) {
+
+    .boton-borrar-chat {
+
+        width: 40px;
+
+        min-width: 40px;
+
+    }
+
+}

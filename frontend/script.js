@@ -1,8 +1,8 @@
 /* =====================================================
    PALEOIA
    SCRIPT PRINCIPAL
+   MEMORIA + HISTORIAL + BORRADO + STREAMING
 ===================================================== */
-
 
 const BACKEND_URL =
     "https://paleoia-backend.onrender.com";
@@ -22,45 +22,33 @@ let developerToken =
         "paleoia_dev_token"
     ) || "";
 
+let conversacionParaBorrar = "";
+
 
 /* =====================================================
    ELEMENTOS
 ===================================================== */
 
 const preguntaInput =
-    document.getElementById(
-        "pregunta"
-    );
+    document.getElementById("pregunta");
 
 const botonPreguntar =
-    document.getElementById(
-        "botonPreguntar"
-    );
+    document.getElementById("botonPreguntar");
 
 const conversacion =
-    document.getElementById(
-        "conversacion"
-    );
+    document.getElementById("conversacion");
 
 const botonMenu =
-    document.getElementById(
-        "botonMenu"
-    );
+    document.getElementById("botonMenu");
 
 const barraLateral =
-    document.getElementById(
-        "barraLateral"
-    );
+    document.getElementById("barraLateral");
 
 const fondoMenu =
-    document.getElementById(
-        "fondoMenu"
-    );
+    document.getElementById("fondoMenu");
 
 const nuevoChat =
-    document.getElementById(
-        "nuevoChat"
-    );
+    document.getElementById("nuevoChat");
 
 const listaConversaciones =
     document.getElementById(
@@ -69,7 +57,21 @@ const listaConversaciones =
 
 
 /* =====================================================
-   ICONO PALEOIA
+   MODAL BORRAR
+===================================================== */
+
+const modalBorrar =
+    document.getElementById("modalBorrar");
+
+const cancelarBorrar =
+    document.getElementById("cancelarBorrar");
+
+const confirmarBorrar =
+    document.getElementById("confirmarBorrar");
+
+
+/* =====================================================
+   ICONO
 ===================================================== */
 
 function crearIconoPaleoIA() {
@@ -79,92 +81,67 @@ function crearIconoPaleoIA() {
             'link[rel="icon"]'
         )
     ) {
-
         return;
-
     }
 
-
     const canvas =
-        document.createElement(
-            "canvas"
-        );
+        document.createElement("canvas");
 
     canvas.width = 64;
     canvas.height = 64;
 
+    const ctx =
+        canvas.getContext("2d");
 
-    const contexto =
-        canvas.getContext(
-            "2d"
-        );
+    ctx.fillStyle = "#243f25";
 
-
-    contexto.fillStyle =
-        "#243f25";
-
-    contexto.fillRect(
+    ctx.fillRect(
         0,
         0,
         64,
         64
     );
 
+    ctx.beginPath();
 
-    contexto.beginPath();
-
-    contexto.arc(
+    ctx.arc(
         32,
         32,
-        26,
+        27,
         0,
         Math.PI * 2
     );
 
-    contexto.fillStyle =
-        "#b7d67c";
+    ctx.fillStyle = "#b7d67c";
 
-    contexto.fill();
+    ctx.fill();
 
-
-    contexto.font =
+    ctx.font =
         "32px Arial";
 
-    contexto.textAlign =
+    ctx.textAlign =
         "center";
 
-    contexto.textBaseline =
+    ctx.textBaseline =
         "middle";
 
-    contexto.fillText(
+    ctx.fillText(
         "🦖",
         32,
         33
     );
 
-
     const icono =
-        document.createElement(
-            "link"
-        );
+        document.createElement("link");
 
-    icono.rel =
-        "icon";
-
-    icono.type =
-        "image/png";
+    icono.rel = "icon";
+    icono.type = "image/png";
 
     icono.href =
-        canvas.toDataURL(
-            "image/png"
-        );
+        canvas.toDataURL("image/png");
 
-
-    document.head.appendChild(
-        icono
-    );
+    document.head.appendChild(icono);
 }
-
 
 crearIconoPaleoIA();
 
@@ -173,14 +150,10 @@ crearIconoPaleoIA();
    ESCAPAR HTML
 ===================================================== */
 
-function escaparHTML(
-    texto
-) {
+function escaparHTML(texto) {
 
     const div =
-        document.createElement(
-            "div"
-        );
+        document.createElement("div");
 
     div.textContent =
         texto ?? "";
@@ -193,164 +166,91 @@ function escaparHTML(
    FORMATEAR RESPUESTA
 ===================================================== */
 
-function formatearRespuesta(
-    texto
-) {
+function formatearRespuesta(texto) {
 
     if (!texto) {
-
         return "";
-
     }
 
-
-    texto =
-        String(texto);
-
+    texto = String(texto);
 
     /*
-       Quitar bloques Markdown
-       de código.
+       Quitar fences de Markdown.
     */
 
-    texto =
-        texto.replace(
-            /```html/gi,
-            ""
-        );
+    texto = texto.replace(
+        /```[a-zA-Z0-9_-]*/g,
+        ""
+    );
 
-    texto =
-        texto.replace(
-            /```javascript/gi,
-            ""
-        );
-
-    texto =
-        texto.replace(
-            /```typescript/gi,
-            ""
-        );
-
-    texto =
-        texto.replace(
-            /```python/gi,
-            ""
-        );
-
-    texto =
-        texto.replace(
-            /```json/gi,
-            ""
-        );
-
-    texto =
-        texto.replace(
-            /```css/gi,
-            ""
-        );
-
-    texto =
-        texto.replace(
-            /```js/gi,
-            ""
-        );
-
-    texto =
-        texto.replace(
-            /```markdown/gi,
-            ""
-        );
-
-    texto =
-        texto.replace(
-            /```text/gi,
-            ""
-        );
-
-    texto =
-        texto.replace(
-            /```/g,
-            ""
-        );
-
+    texto = texto.replace(
+        /```/g,
+        ""
+    );
 
     /*
-       Quitar HTML accidental.
+       Quitar etiquetas HTML peligrosas
+       que puedan aparecer por error.
     */
 
-    texto =
-        texto.replace(
-            /<html[^>]*>/gi,
-            ""
-        );
+    texto = texto.replace(
+        /<html[^>]*>/gi,
+        ""
+    );
 
-    texto =
-        texto.replace(
-            /<\/html>/gi,
-            ""
-        );
+    texto = texto.replace(
+        /<\/html>/gi,
+        ""
+    );
 
-    texto =
-        texto.replace(
-            /<head[^>]*>[\s\S]*?<\/head>/gi,
-            ""
-        );
+    texto = texto.replace(
+        /<head[^>]*>[\s\S]*?<\/head>/gi,
+        ""
+    );
 
-    texto =
-        texto.replace(
-            /<body[^>]*>/gi,
-            ""
-        );
+    texto = texto.replace(
+        /<body[^>]*>/gi,
+        ""
+    );
 
-    texto =
-        texto.replace(
-            /<\/body>/gi,
-            ""
-        );
-
+    texto = texto.replace(
+        /<\/body>/gi,
+        ""
+    );
 
     /*
        Escapar HTML.
     */
 
     texto =
-        escaparHTML(
-            texto
-        );
-
+        escaparHTML(texto);
 
     /*
        Negritas.
     */
 
-    texto =
-        texto.replace(
-            /\*\*(.*?)\*\*/g,
-            "<strong>$1</strong>"
-        );
-
+    texto = texto.replace(
+        /\*\*(.*?)\*\*/g,
+        "<strong>$1</strong>"
+    );
 
     /*
        Cursivas.
     */
 
-    texto =
-        texto.replace(
-            /(?<!\*)\*([^*]+)\*(?!\*)/g,
-            "<em>$1</em>"
-        );
-
+    texto = texto.replace(
+        /\*(.*?)\*/g,
+        "<em>$1</em>"
+    );
 
     /*
-       Saltos de línea.
+       Saltos.
     */
 
-    texto =
-        texto.replace(
-            /\n/g,
-            "<br>"
-        );
-
+    texto = texto.replace(
+        /\n/g,
+        "<br>"
+    );
 
     return texto;
 }
@@ -362,37 +262,30 @@ function formatearRespuesta(
 
 function desplazarChatAbajo() {
 
-    requestAnimationFrame(
-        () => {
+    if (!conversacion) {
+        return;
+    }
 
-            if (!conversacion) {
-                return;
-            }
+    requestAnimationFrame(() => {
 
-            conversacion.scrollTop =
-                conversacion.scrollHeight;
+        conversacion.scrollTop =
+            conversacion.scrollHeight;
 
-        }
-    );
+    });
 }
 
 
 /* =====================================================
-   MENSAJE USUARIO
+   MENSAJE DEL USUARIO
 ===================================================== */
 
-function agregarMensajeUsuario(
-    texto
-) {
+function agregarMensajeUsuario(texto) {
 
     const mensaje =
-        document.createElement(
-            "div"
-        );
+        document.createElement("div");
 
     mensaje.className =
         "mensaje usuario";
-
 
     mensaje.innerHTML = `
 
@@ -402,33 +295,27 @@ function agregarMensajeUsuario(
 
     `;
 
-
     conversacion.appendChild(
         mensaje
     );
 
-
     desplazarChatAbajo();
-
 
     return mensaje;
 }
 
 
 /* =====================================================
-   MENSAJE IA
+   MENSAJE DE PALEOIA
 ===================================================== */
 
-function crearMensajeIA() {
+function agregarMensajeIA(texto = "") {
 
     const mensaje =
-        document.createElement(
-            "div"
-        );
+        document.createElement("div");
 
     mensaje.className =
         "mensaje ia";
-
 
     mensaje.innerHTML = `
 
@@ -448,18 +335,25 @@ function crearMensajeIA() {
 
     `;
 
-
     conversacion.appendChild(
         mensaje
     );
 
+    const respuesta =
+        mensaje.querySelector(
+            ".respuesta-stream"
+        );
+
+    if (texto) {
+
+        respuesta.innerHTML =
+            formatearRespuesta(texto);
+
+    }
 
     desplazarChatAbajo();
 
-
-    return mensaje.querySelector(
-        ".respuesta-stream"
-    );
+    return respuesta;
 }
 
 
@@ -502,19 +396,64 @@ function mostrarBienvenida() {
 
 
 /* =====================================================
+   NORMALIZAR ROL
+===================================================== */
+
+function obtenerTipoMensaje(rol) {
+
+    if (!rol) {
+        return "ia";
+    }
+
+    const rolNormalizado =
+        String(rol)
+            .trim()
+            .toLowerCase();
+
+    /*
+       TODOS estos significan usuario.
+    */
+
+    if (
+        rolNormalizado === "usuario" ||
+        rolNormalizado === "user" ||
+        rolNormalizado === "human"
+    ) {
+        return "usuario";
+    }
+
+    /*
+       TODOS estos significan IA.
+    */
+
+    if (
+        rolNormalizado === "paleoia" ||
+        rolNormalizado === "ia" ||
+        rolNormalizado === "assistant" ||
+        rolNormalizado === "ai" ||
+        rolNormalizado === "modelo"
+    ) {
+        return "ia";
+    }
+
+    /*
+       Si no conocemos el rol,
+       no asumimos que es usuario.
+    */
+
+    return "ia";
+}
+
+
+/* =====================================================
    CARGAR HISTORIAL
 ===================================================== */
 
-async function cargarHistorial(
-    id
-) {
+async function cargarHistorial(id) {
 
     if (!id) {
-
         return false;
-
     }
-
 
     try {
 
@@ -523,39 +462,21 @@ async function cargarHistorial(
                 `${BACKEND_URL}/historial/${encodeURIComponent(id)}`
             );
 
-
         if (!respuesta.ok) {
-
-            console.error(
-                "Error HTTP historial:",
-                respuesta.status
-            );
-
             return false;
-
         }
-
 
         const datos =
             await respuesta.json();
 
-
         if (
-            !datos.exito
-            ||
-            !Array.isArray(
-                datos.mensajes
-            )
+            !datos.exito ||
+            !Array.isArray(datos.mensajes)
         ) {
-
             return false;
-
         }
 
-
-        conversacion.innerHTML =
-            "";
-
+        conversacion.innerHTML = "";
 
         if (
             datos.mensajes.length === 0
@@ -564,25 +485,27 @@ async function cargarHistorial(
             mostrarBienvenida();
 
             return true;
-
         }
 
+
+        /*
+           Reconstruir TODOS los mensajes
+           respetando su rol real.
+        */
 
         for (
             const mensaje
             of datos.mensajes
         ) {
 
-            /*
-               El backend utiliza:
-               Usuario
-               PaleoIA
-            */
+            const tipo =
+                obtenerTipoMensaje(
+                    mensaje.rol
+                );
+
 
             if (
-                mensaje.rol === "Usuario"
-                ||
-                mensaje.rol === "usuario"
+                tipo === "usuario"
             ) {
 
                 agregarMensajeUsuario(
@@ -591,25 +514,17 @@ async function cargarHistorial(
 
             } else {
 
-                const elemento =
-                    crearMensajeIA();
-
-
-                elemento.innerHTML =
-                    formatearRespuesta(
-                        mensaje.contenido
-                    );
+                agregarMensajeIA(
+                    mensaje.contenido
+                );
 
             }
 
         }
 
-
         desplazarChatAbajo();
 
-
         return true;
-
 
     } catch (error) {
 
@@ -619,7 +534,6 @@ async function cargarHistorial(
         );
 
         return false;
-
     }
 }
 
@@ -637,38 +551,28 @@ async function crearNuevaConversacion() {
                 `${BACKEND_URL}/nueva-conversacion`
             );
 
-
         if (!respuesta.ok) {
-
             return false;
-
         }
-
 
         const datos =
             await respuesta.json();
 
-
         if (
-            datos.exito
-            &&
+            datos.exito &&
             datos.conversation_id
         ) {
 
             conversationId =
                 datos.conversation_id;
 
-
             localStorage.setItem(
                 "paleoia_conversation_id",
                 conversationId
             );
 
-
             return true;
-
         }
-
 
     } catch (error) {
 
@@ -679,8 +583,82 @@ async function crearNuevaConversacion() {
 
     }
 
-
     return false;
+}
+
+
+/* =====================================================
+   ABRIR CHAT
+===================================================== */
+
+async function abrirConversacion(id) {
+
+    if (!id) {
+        return;
+    }
+
+    conversationId = id;
+
+    localStorage.setItem(
+        "paleoia_conversation_id",
+        conversationId
+    );
+
+    const cargado =
+        await cargarHistorial(
+            conversationId
+        );
+
+    if (!cargado) {
+
+        alert(
+            "No se pudo cargar esta conversación."
+        );
+
+        return;
+    }
+
+    cerrarMenu();
+
+    await cargarListaConversaciones();
+
+    if (preguntaInput) {
+        preguntaInput.focus();
+    }
+}
+
+
+/* =====================================================
+   MODAL DE BORRADO
+===================================================== */
+
+function mostrarModalBorrar(id) {
+
+    if (!modalBorrar) {
+        return;
+    }
+
+    conversacionParaBorrar =
+        id;
+
+    modalBorrar.classList.add(
+        "activo"
+    );
+}
+
+
+function cerrarModalBorrar() {
+
+    if (!modalBorrar) {
+        return;
+    }
+
+    modalBorrar.classList.remove(
+        "activo"
+    );
+
+    conversacionParaBorrar =
+        "";
 }
 
 
@@ -688,29 +666,11 @@ async function crearNuevaConversacion() {
    BORRAR CONVERSACIÓN
 ===================================================== */
 
-async function borrarConversacion(
-    id
-) {
+async function borrarConversacion(id) {
 
     if (!id) {
-
-        return false;
-
+        return;
     }
-
-
-    const confirmar =
-        confirm(
-            "¿Seguro que quieres borrar esta conversación?"
-        );
-
-
-    if (!confirmar) {
-
-        return false;
-
-    }
-
 
     try {
 
@@ -722,7 +682,6 @@ async function borrarConversacion(
                 }
             );
 
-
         if (!respuesta.ok) {
 
             throw new Error(
@@ -731,20 +690,14 @@ async function borrarConversacion(
 
         }
 
-
         const datos =
             await respuesta.json();
 
-
         if (!datos.exito) {
 
-            alert(
-                datos.mensaje ||
-                "No se pudo borrar la conversación."
+            throw new Error(
+                "El servidor rechazó el borrado."
             );
-
-            return false;
-
         }
 
 
@@ -763,7 +716,6 @@ async function borrarConversacion(
                 "paleoia_conversation_id"
             );
 
-
             await crearNuevaConversacion();
 
             mostrarBienvenida();
@@ -771,11 +723,9 @@ async function borrarConversacion(
         }
 
 
+        cerrarModalBorrar();
+
         await cargarListaConversaciones();
-
-
-        return true;
-
 
     } catch (error) {
 
@@ -784,29 +734,79 @@ async function borrarConversacion(
             error
         );
 
-
         alert(
-            "❌ No se pudo borrar la conversación."
+            "No se pudo borrar la conversación."
         );
-
-
-        return false;
     }
 }
 
 
 /* =====================================================
-   CARGAR LISTA DE CONVERSACIONES
+   CONFIRMAR BORRADO
+===================================================== */
+
+if (confirmarBorrar) {
+
+    confirmarBorrar.addEventListener(
+        "click",
+        async () => {
+
+            if (
+                !conversacionParaBorrar
+            ) {
+                return;
+            }
+
+            const id =
+                conversacionParaBorrar;
+
+            await borrarConversacion(
+                id
+            );
+
+        }
+    );
+}
+
+
+if (cancelarBorrar) {
+
+    cancelarBorrar.addEventListener(
+        "click",
+        cerrarModalBorrar
+    );
+}
+
+
+if (modalBorrar) {
+
+    modalBorrar.addEventListener(
+        "click",
+        evento => {
+
+            if (
+                evento.target ===
+                modalBorrar
+            ) {
+
+                cerrarModalBorrar();
+
+            }
+
+        }
+    );
+}
+
+
+/* =====================================================
+   LISTA DE CONVERSACIONES
 ===================================================== */
 
 async function cargarListaConversaciones() {
 
     if (!listaConversaciones) {
-
         return;
-
     }
-
 
     try {
 
@@ -815,30 +815,21 @@ async function cargarListaConversaciones() {
                 `${BACKEND_URL}/conversaciones`
             );
 
-
         if (!respuesta.ok) {
-
             return;
-
         }
-
 
         const datos =
             await respuesta.json();
 
-
         if (
-            !datos.exito
-            ||
+            !datos.exito ||
             !Array.isArray(
                 datos.conversaciones
             )
         ) {
-
             return;
-
         }
-
 
         listaConversaciones.innerHTML =
             "";
@@ -865,60 +856,48 @@ async function cargarListaConversaciones() {
             vacio.style.padding =
                 "10px";
 
-
             listaConversaciones.appendChild(
                 vacio
             );
 
-
             return;
-
         }
 
 
         for (
-            const conversacionItem
+            const item
             of datos.conversaciones
         ) {
 
             /*
                IMPORTANTE:
-
-               El backend devuelve:
-               conversation_id
-
-               No "id".
+               El backend usa conversation_id.
             */
 
             const id =
-                conversacionItem.conversation_id;
+                item.conversation_id;
 
 
             if (!id) {
-
                 continue;
-
             }
 
+
+            /*
+               CONTENEDOR
+            */
 
             const contenedor =
                 document.createElement(
                     "div"
                 );
 
-
-            contenedor.style.display =
-                "flex";
-
-            contenedor.style.gap =
-                "6px";
-
-            contenedor.style.width =
-                "100%";
+            contenedor.className =
+                "conversacion-item";
 
 
             /*
-               BOTÓN ABRIR CHAT
+               BOTÓN CHAT
             */
 
             const boton =
@@ -926,127 +905,53 @@ async function cargarListaConversaciones() {
                     "button"
                 );
 
-
             boton.type =
                 "button";
 
+            boton.className =
+                "boton-conversacion";
 
             boton.textContent =
-                conversacionItem.titulo
-                ||
+                item.titulo ||
                 "Nueva conversación";
 
+            boton.title =
+                item.titulo ||
+                "Nueva conversación";
 
             boton.dataset.id =
                 id;
 
 
-            boton.style.flex =
-                "1";
-
-            boton.style.minWidth =
-                "0";
-
-            boton.style.padding =
-                "10px";
-
-            boton.style.border =
-                "1px solid rgba(255,255,255,.08)";
-
-            boton.style.borderRadius =
-                "10px";
-
-            boton.style.background =
-                "rgba(255,255,255,.04)";
-
-            boton.style.color =
-                "#f5f0d8";
-
-            boton.style.textAlign =
-                "left";
-
-            boton.style.cursor =
-                "pointer";
-
-            boton.style.overflow =
-                "hidden";
-
-            boton.style.textOverflow =
-                "ellipsis";
-
-            boton.style.whiteSpace =
-                "nowrap";
-
+            /*
+               CHAT ACTUAL
+            */
 
             if (
                 id === conversationId
             ) {
 
-                boton.style.background =
-                    "rgba(183,214,124,.16)";
-
-                boton.style.border =
-                    "1px solid rgba(183,214,124,.3)";
+                boton.classList.add(
+                    "seleccionado"
+                );
 
             }
 
 
-            /*
-               ABRIR CONVERSACIÓN
-            */
-
             boton.addEventListener(
                 "click",
-                async function() {
+                () => {
 
-                    const idSeleccionado =
-                        this.dataset.id;
-
-
-                    conversationId =
-                        idSeleccionado;
-
-
-                    localStorage.setItem(
-                        "paleoia_conversation_id",
-                        conversationId
+                    abrirConversacion(
+                        id
                     );
-
-
-                    const cargado =
-                        await cargarHistorial(
-                            conversationId
-                        );
-
-
-                    if (!cargado) {
-
-                        alert(
-                            "No se pudo cargar esta conversación."
-                        );
-
-                        return;
-
-                    }
-
-
-                    cerrarMenu();
-
-                    await cargarListaConversaciones();
-
-
-                    if (preguntaInput) {
-
-                        preguntaInput.focus();
-
-                    }
 
                 }
             );
 
 
             /*
-               BOTÓN BORRAR
+               BOTÓN ELIMINAR
             */
 
             const botonBorrar =
@@ -1054,54 +959,43 @@ async function cargarListaConversaciones() {
                     "button"
                 );
 
-
             botonBorrar.type =
                 "button";
 
+            botonBorrar.className =
+                "boton-borrar-chat";
 
             botonBorrar.textContent =
                 "🗑️";
 
-
             botonBorrar.title =
-                "Borrar conversación";
+                "Eliminar conversación";
 
-
-            botonBorrar.style.width =
-                "42px";
-
-            botonBorrar.style.minWidth =
-                "42px";
-
-            botonBorrar.style.border =
-                "1px solid rgba(255,100,100,.2)";
-
-            botonBorrar.style.borderRadius =
-                "10px";
-
-            botonBorrar.style.background =
-                "rgba(255,80,80,.08)";
-
-            botonBorrar.style.color =
-                "#ffb4b4";
-
-            botonBorrar.style.cursor =
-                "pointer";
+            botonBorrar.setAttribute(
+                "aria-label",
+                "Eliminar conversación"
+            );
 
 
             botonBorrar.addEventListener(
                 "click",
-                async function(evento) {
+                evento => {
+
+                    evento.preventDefault();
 
                     evento.stopPropagation();
 
-                    await borrarConversacion(
+                    mostrarModalBorrar(
                         id
                     );
 
                 }
             );
 
+
+            /*
+               ARMAR ELEMENTO
+            */
 
             contenedor.appendChild(
                 boton
@@ -1111,13 +1005,11 @@ async function cargarListaConversaciones() {
                 botonBorrar
             );
 
-
             listaConversaciones.appendChild(
                 contenedor
             );
 
         }
-
 
     } catch (error) {
 
@@ -1125,7 +1017,6 @@ async function cargarListaConversaciones() {
             "Error cargando conversaciones:",
             error
         );
-
     }
 }
 
@@ -1139,20 +1030,14 @@ async function preguntar() {
     const pregunta =
         preguntaInput.value.trim();
 
-
     if (!pregunta) {
-
         return;
-
     }
-
 
     if (
         botonPreguntar.disabled
     ) {
-
         return;
-
     }
 
 
@@ -1164,16 +1049,13 @@ async function preguntar() {
 
 
     /*
-       Si por alguna razón
-       no tenemos conversación,
-       crear una.
+       Asegurar conversación.
     */
 
     if (!conversationId) {
 
         const creada =
             await crearNuevaConversacion();
-
 
         if (!creada) {
 
@@ -1184,23 +1066,28 @@ async function preguntar() {
                 false;
 
             return;
-
         }
-
     }
 
+
+    /*
+       Mostrar pregunta.
+    */
 
     agregarMensajeUsuario(
         pregunta
     );
 
-
     preguntaInput.value =
         "";
 
 
+    /*
+       Crear respuesta vacía.
+    */
+
     const respuestaElemento =
-        crearMensajeIA();
+        agregarMensajeIA();
 
 
     try {
@@ -1231,7 +1118,6 @@ async function preguntar() {
             throw new Error(
                 `HTTP ${respuesta.status}`
             );
-
         }
 
 
@@ -1240,19 +1126,16 @@ async function preguntar() {
             throw new Error(
                 "El servidor no devolvió streaming."
             );
-
         }
 
 
         const reader =
             respuesta.body.getReader();
 
-
         const decoder =
             new TextDecoder(
                 "utf-8"
             );
-
 
         let buffer =
             "";
@@ -1263,11 +1146,10 @@ async function preguntar() {
             const resultado =
                 await reader.read();
 
-
-            if (resultado.done) {
-
+            if (
+                resultado.done
+            ) {
                 break;
-
             }
 
 
@@ -1281,9 +1163,7 @@ async function preguntar() {
 
 
             const lineas =
-                buffer.split(
-                    "\n"
-                );
+                buffer.split("\n");
 
 
             buffer =
@@ -1298,9 +1178,7 @@ async function preguntar() {
                 if (
                     !linea.trim()
                 ) {
-
                     continue;
-
                 }
 
 
@@ -1321,14 +1199,18 @@ async function preguntar() {
                         "texto"
                     ) {
 
+                        /*
+                           Para streaming no
+                           escapamos el texto
+                           completo acumulado.
+                        */
+
                         respuestaElemento.innerHTML +=
                             formatearRespuesta(
                                 datos.texto
                             );
 
-
                         desplazarChatAbajo();
-
                     }
 
 
@@ -1348,17 +1230,13 @@ async function preguntar() {
                             conversationId =
                                 datos.conversation_id;
 
-
                             localStorage.setItem(
                                 "paleoia_conversation_id",
                                 conversationId
                             );
-
                         }
 
-
                         await cargarListaConversaciones();
-
                     }
 
 
@@ -1383,18 +1261,16 @@ async function preguntar() {
 
                     }
 
-
                 } catch (error) {
 
                     console.warn(
-                        "Línea no válida:",
+                        "Línea inválida:",
                         linea
                     );
 
                 }
 
             }
-
         }
 
 
@@ -1405,12 +1281,10 @@ async function preguntar() {
             error
         );
 
-
         respuestaElemento.innerHTML =
             `
             <span class="error-paleoia">
-                ❌ No se pudo conectar
-                con PaleoIA.
+                ❌ No se pudo conectar con PaleoIA.
             </span>
             `;
 
@@ -1423,12 +1297,9 @@ async function preguntar() {
     preguntaInput.disabled =
         false;
 
-
     preguntaInput.focus();
 
-
     desplazarChatAbajo();
-
 
     await cargarListaConversaciones();
 }
@@ -1442,11 +1313,10 @@ if (preguntaInput) {
 
     preguntaInput.addEventListener(
         "keydown",
-        function(evento) {
+        evento => {
 
             if (
-                evento.key === "Enter"
-                &&
+                evento.key === "Enter" &&
                 !evento.shiftKey
             ) {
 
@@ -1458,7 +1328,6 @@ if (preguntaInput) {
 
         }
     );
-
 }
 
 
@@ -1472,7 +1341,6 @@ if (botonPreguntar) {
         "click",
         preguntar
     );
-
 }
 
 
@@ -1489,16 +1357,14 @@ document
 
             boton.addEventListener(
                 "click",
-                function() {
+                () => {
 
                     if (!preguntaInput) {
                         return;
                     }
 
-
                     preguntaInput.value =
-                        this.textContent.trim();
-
+                        boton.textContent.trim();
 
                     preguntar();
 
@@ -1520,18 +1386,14 @@ function abrirMenu() {
         barraLateral.classList.add(
             "activo"
         );
-
     }
-
 
     if (fondoMenu) {
 
         fondoMenu.classList.add(
             "activo"
         );
-
     }
-
 
     cargarListaConversaciones();
 }
@@ -1544,18 +1406,14 @@ function cerrarMenu() {
         barraLateral.classList.remove(
             "activo"
         );
-
     }
-
 
     if (fondoMenu) {
 
         fondoMenu.classList.remove(
             "activo"
         );
-
     }
-
 }
 
 
@@ -1565,7 +1423,6 @@ if (botonMenu) {
         "click",
         abrirMenu
     );
-
 }
 
 
@@ -1575,7 +1432,6 @@ if (fondoMenu) {
         "click",
         cerrarMenu
     );
-
 }
 
 
@@ -1587,42 +1443,48 @@ if (nuevoChat) {
 
     nuevoChat.addEventListener(
         "click",
-        async function() {
+        async () => {
 
             const creado =
                 await crearNuevaConversacion();
 
-
             if (!creado) {
-
-                alert(
-                    "❌ No se pudo crear una conversación."
-                );
-
                 return;
-
             }
-
 
             mostrarBienvenida();
 
-
             cerrarMenu();
-
 
             await cargarListaConversaciones();
 
-
             if (preguntaInput) {
-
                 preguntaInput.focus();
-
             }
 
         }
     );
-
 }
+
+
+/* =====================================================
+   ESCAPE
+===================================================== */
+
+document.addEventListener(
+    "keydown",
+    evento => {
+
+        if (
+            evento.key === "Escape"
+        ) {
+
+            cerrarModalBorrar();
+
+        }
+
+    }
+);
 
 
 /* =====================================================
@@ -1632,8 +1494,8 @@ if (nuevoChat) {
 async function iniciarPaleoIA() {
 
     /*
-       Intentar recuperar el último
-       chat utilizado.
+       Intentar recuperar el chat
+       que estaba abierto.
     */
 
     if (conversationId) {
@@ -1643,47 +1505,23 @@ async function iniciarPaleoIA() {
                 conversationId
             );
 
-
         if (!cargado) {
 
-            /*
-               El ID guardado ya no existe.
-               Crear uno nuevo.
-            */
-
-            localStorage.removeItem(
-                "paleoia_conversation_id"
-            );
-
-            conversationId = "";
-
-        }
-
-    }
-
-
-    /*
-       Si no tenemos conversación,
-       crear una nueva.
-    */
-
-    if (!conversationId) {
-
-        const creada =
             await crearNuevaConversacion();
 
-
-        if (creada) {
-
             mostrarBienvenida();
-
         }
 
+    } else {
+
+        await crearNuevaConversacion();
+
+        mostrarBienvenida();
     }
 
 
     /*
-       Cargar historial lateral.
+       Cargar lista lateral.
     */
 
     await cargarListaConversaciones();
@@ -1698,12 +1536,7 @@ async function iniciarPaleoIA() {
         preguntaInput.focus();
 
     }
-
 }
 
-
-/* =====================================================
-   INICIAR
-===================================================== */
 
 iniciarPaleoIA();
