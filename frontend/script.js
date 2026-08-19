@@ -863,16 +863,16 @@ async function enviarPregunta() {
 
     try {
 
-        const respuesta =
-            await fetch(
+const respuesta =
+    await fetch(
 
-                "http://192.168.5.200:8000/preguntar?pregunta=" +
+        "https://paleoia-backend.onrender.com/preguntar?pregunta=" +
 
-                encodeURIComponent(
-                    texto
-                )
+        encodeURIComponent(
+            texto
+        )
 
-            );
+    );
 
 
         if (!respuesta.ok) {
