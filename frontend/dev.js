@@ -1,68 +1,60 @@
-/* ==========================================
+/* =========================================================
    PALEOIA
    MODO DESARROLLADOR
-========================================== */
+========================================================= */
 
 
-/* ==========================================
+/* =========================================================
    CONFIGURACIÓN
-========================================== */
+========================================================= */
 
-const BACKEND_URL =
+const BACKEND_URL_DEV =
     "https://paleoia-backend.onrender.com";
 
 
-/* ==========================================
+/* =========================================================
    ELEMENTOS
-========================================== */
+========================================================= */
 
 const botonDesarrollador =
     document.getElementById(
         "botonDesarrollador"
     );
 
-
 const modalDesarrollador =
     document.getElementById(
         "modalDesarrollador"
     );
-
 
 const cerrarDesarrollador =
     document.getElementById(
         "cerrarDesarrollador"
     );
 
-
 const passwordDesarrollador =
     document.getElementById(
         "passwordDesarrollador"
     );
-
 
 const activarDesarrollador =
     document.getElementById(
         "activarDesarrollador"
     );
 
-
 const desactivarDesarrollador =
     document.getElementById(
         "desactivarDesarrollador"
     );
-
 
 const mensajeDesarrollador =
     document.getElementById(
         "mensajeDesarrollador"
     );
 
-
 const loginDesarrollador =
     document.getElementById(
         "loginDesarrollador"
     );
-
 
 const panelActivoDesarrollador =
     document.getElementById(
@@ -70,44 +62,67 @@ const panelActivoDesarrollador =
     );
 
 
-
-/* ==========================================
+/* =========================================================
    TOKEN
-========================================== */
+========================================================= */
 
-let tokenDesarrollador =
-    sessionStorage.getItem(
-        "paleoia_dev_token"
+let tokenDesarrollador = null;
+
+
+try {
+
+    tokenDesarrollador =
+        sessionStorage.getItem(
+            "paleoia_dev_token"
+        );
+
+} catch (error) {
+
+    console.warn(
+        "No se pudo leer el token."
     );
 
+}
 
 
-/* ==========================================
+/* =========================================================
    ABRIR MODAL
-========================================== */
+========================================================= */
 
 if (botonDesarrollador) {
 
     botonDesarrollador.addEventListener(
         "click",
-        () => {
+        function() {
 
-            modalDesarrollador
-                .classList
-                .add("activo");
+            if (modalDesarrollador) {
+
+                modalDesarrollador
+                    .classList
+                    .add("activo");
+
+            }
+
 
             actualizarInterfazDev();
 
-            setTimeout(() => {
 
-                if (!tokenDesarrollador) {
+            setTimeout(
+                function() {
 
-                    passwordDesarrollador
-                        .focus();
+                    if (
+                        !tokenDesarrollador &&
+                        passwordDesarrollador
+                    ) {
 
-                }
+                        passwordDesarrollador
+                            .focus();
 
-            }, 100);
+                    }
+
+                },
+                100
+            );
 
         }
     );
@@ -115,10 +130,9 @@ if (botonDesarrollador) {
 }
 
 
-
-/* ==========================================
+/* =========================================================
    CERRAR MODAL
-========================================== */
+========================================================= */
 
 if (cerrarDesarrollador) {
 
@@ -134,7 +148,7 @@ if (modalDesarrollador) {
 
     modalDesarrollador.addEventListener(
         "click",
-        (evento) => {
+        function(evento) {
 
             if (
                 evento.target ===
@@ -153,17 +167,20 @@ if (modalDesarrollador) {
 
 function cerrarModalDev() {
 
-    modalDesarrollador
-        .classList
-        .remove("activo");
+    if (modalDesarrollador) {
+
+        modalDesarrollador
+            .classList
+            .remove("activo");
+
+    }
 
 }
 
 
-
-/* ==========================================
-   ACTIVAR MODO DESARROLLADOR
-========================================== */
+/* =========================================================
+   ACTIVAR DESARROLLADOR
+========================================================= */
 
 if (activarDesarrollador) {
 
@@ -175,18 +192,21 @@ if (activarDesarrollador) {
 }
 
 
-
-/* ENTER EN CONTRASEÑA */
+/* =========================================================
+   ENTER EN CONTRASEÑA
+========================================================= */
 
 if (passwordDesarrollador) {
 
     passwordDesarrollador.addEventListener(
         "keydown",
-        (evento) => {
+        function(evento) {
 
             if (
                 evento.key === "Enter"
             ) {
+
+                evento.preventDefault();
 
                 activarModoDesarrollador();
 
@@ -198,12 +218,16 @@ if (passwordDesarrollador) {
 }
 
 
-
-/* ==========================================
-   FUNCIÓN LOGIN
-========================================== */
+/* =========================================================
+   LOGIN
+========================================================= */
 
 async function activarModoDesarrollador() {
+
+    if (!passwordDesarrollador) {
+        return;
+    }
+
 
     const password =
         passwordDesarrollador
@@ -213,7 +237,7 @@ async function activarModoDesarrollador() {
 
     if (!password) {
 
-        mostrarMensaje(
+        mostrarMensajeDev(
             "Introduce la contraseña.",
             "error"
         );
@@ -223,37 +247,40 @@ async function activarModoDesarrollador() {
     }
 
 
-    activarDesarrollador.disabled =
-        true;
+    if (activarDesarrollador) {
 
+        activarDesarrollador.disabled =
+            true;
 
-    activarDesarrollador.textContent =
-        "Verificando...";
+        activarDesarrollador.textContent =
+            "Verificando...";
 
-
-    mostrarMensaje(
-        "",
-        ""
-    );
+    }
 
 
     try {
 
         const respuesta =
             await fetch(
-                `${BACKEND_URL}/activar-desarrollador`,
+                BACKEND_URL_DEV +
+                "/activar-desarrollador",
                 {
 
                     method: "POST",
 
                     headers: {
                         "Content-Type":
+                            "application/json",
+
+                        "Accept":
                             "application/json"
                     },
 
-                    body: JSON.stringify({
-                        password: password
-                    })
+                    body:
+                        JSON.stringify({
+                            password:
+                                password
+                        })
 
                 }
             );
@@ -272,17 +299,28 @@ async function activarModoDesarrollador() {
                 datos.token;
 
 
-            sessionStorage.setItem(
-                "paleoia_dev_token",
-                tokenDesarrollador
-            );
+            try {
+
+                sessionStorage.setItem(
+                    "paleoia_dev_token",
+                    tokenDesarrollador
+                );
+
+            } catch (error) {
+
+                console.error(
+                    "No se pudo guardar el token:",
+                    error
+                );
+
+            }
 
 
             passwordDesarrollador
                 .value = "";
 
 
-            mostrarMensaje(
+            mostrarMensajeDev(
                 "✓ Modo desarrollador activado.",
                 "exito"
             );
@@ -291,18 +329,21 @@ async function activarModoDesarrollador() {
             actualizarInterfazDev();
 
 
-            setTimeout(() => {
+            setTimeout(
+                function() {
 
-                cerrarModalDev();
+                    cerrarModalDev();
 
-            }, 1000);
+                },
+                800
+            );
 
 
         } else {
 
-            mostrarMensaje(
+            mostrarMensajeDev(
                 datos.mensaje ||
-                "Contraseña incorrecta.",
+                "❌ Contraseña incorrecta.",
                 "error"
             );
 
@@ -312,33 +353,35 @@ async function activarModoDesarrollador() {
     } catch (error) {
 
         console.error(
-            "Error activando desarrollador:",
+            "❌ Error activando desarrollador:",
             error
         );
 
 
-        mostrarMensaje(
-            "No se pudo conectar con PaleoIA.",
+        mostrarMensajeDev(
+            "❌ No se pudo conectar con PaleoIA.",
             "error"
         );
 
     }
 
 
-    activarDesarrollador.disabled =
-        false;
+    if (activarDesarrollador) {
 
+        activarDesarrollador.disabled =
+            false;
 
-    activarDesarrollador.textContent =
-        "Activar modo desarrollador";
+        activarDesarrollador.textContent =
+            "Activar modo desarrollador";
+
+    }
 
 }
 
 
-
-/* ==========================================
+/* =========================================================
    DESACTIVAR
-========================================== */
+========================================================= */
 
 if (desactivarDesarrollador) {
 
@@ -352,12 +395,18 @@ if (desactivarDesarrollador) {
 
 async function desactivarModoDesarrollador() {
 
-    if (tokenDesarrollador) {
+    const token =
+        tokenDesarrollador;
+
+
+    if (token) {
 
         try {
 
             await fetch(
-                `${BACKEND_URL}/desactivar-desarrollador?token=${encodeURIComponent(tokenDesarrollador)}`,
+                BACKEND_URL_DEV +
+                "/desactivar-desarrollador?token=" +
+                encodeURIComponent(token),
                 {
                     method: "POST"
                 }
@@ -365,16 +414,27 @@ async function desactivarModoDesarrollador() {
 
         } catch (error) {
 
-            console.error(error);
+            console.error(
+                "Error cerrando sesión:",
+                error
+            );
 
         }
 
     }
 
 
-    sessionStorage.removeItem(
-        "paleoia_dev_token"
-    );
+    try {
+
+        sessionStorage.removeItem(
+            "paleoia_dev_token"
+        );
+
+    } catch (error) {
+
+        console.error(error);
+
+    }
 
 
     tokenDesarrollador =
@@ -384,7 +444,7 @@ async function desactivarModoDesarrollador() {
     actualizarInterfazDev();
 
 
-    mostrarMensaje(
+    mostrarMensajeDev(
         "Modo desarrollador cerrado.",
         "exito"
     );
@@ -392,55 +452,90 @@ async function desactivarModoDesarrollador() {
 }
 
 
-
-/* ==========================================
+/* =========================================================
    ACTUALIZAR INTERFAZ
-========================================== */
+========================================================= */
 
 function actualizarInterfazDev() {
 
     const activo =
-        Boolean(tokenDesarrollador);
+        Boolean(
+            tokenDesarrollador
+        );
 
 
-    if (activo) {
+    if (
+        activo
+    ) {
 
-        loginDesarrollador.hidden =
-            true;
+        if (loginDesarrollador) {
 
-        panelActivoDesarrollador.hidden =
-            false;
+            loginDesarrollador.hidden =
+                true;
 
-        botonDesarrollador
-            ?.classList
-            .add("activo");
+        }
+
+
+        if (panelActivoDesarrollador) {
+
+            panelActivoDesarrollador.hidden =
+                false;
+
+        }
+
+
+        if (botonDesarrollador) {
+
+            botonDesarrollador
+                .classList
+                .add("activo");
+
+        }
 
     } else {
 
-        loginDesarrollador.hidden =
-            false;
+        if (loginDesarrollador) {
 
-        panelActivoDesarrollador.hidden =
-            true;
+            loginDesarrollador.hidden =
+                false;
 
-        botonDesarrollador
-            ?.classList
-            .remove("activo");
+        }
+
+
+        if (panelActivoDesarrollador) {
+
+            panelActivoDesarrollador.hidden =
+                true;
+
+        }
+
+
+        if (botonDesarrollador) {
+
+            botonDesarrollador
+                .classList
+                .remove("activo");
+
+        }
 
     }
 
 }
 
 
-
-/* ==========================================
+/* =========================================================
    MENSAJES
-========================================== */
+========================================================= */
 
-function mostrarMensaje(
+function mostrarMensajeDev(
     texto,
     tipo
 ) {
+
+    if (!mensajeDesarrollador) {
+        return;
+    }
+
 
     mensajeDesarrollador.textContent =
         texto;
@@ -461,98 +556,12 @@ function mostrarMensaje(
 }
 
 
-
-/* ==========================================
-   AGREGAR TOKEN A /PREGUNTAR
-==========================================
-
-   Esto permite que tu script.js actual
-   siga funcionando.
-
-   Cuando el usuario está autenticado,
-   cualquier petición a /preguntar recibe
-   automáticamente su token.
-========================================== */
-
-const fetchOriginal =
-    window.fetch;
-
-
-window.fetch = function (
-    recurso,
-    opciones = {}
-) {
-
-    try {
-
-        const url =
-            typeof recurso === "string"
-                ? recurso
-                : recurso.url;
-
-
-        if (
-            url &&
-            url.includes("/preguntar") &&
-            tokenDesarrollador
-        ) {
-
-            const separador =
-                url.includes("?")
-                    ? "&"
-                    : "?";
-
-
-            const nuevaUrl =
-                url +
-                separador +
-                "token=" +
-                encodeURIComponent(
-                    tokenDesarrollador
-                );
-
-
-            if (
-                typeof recurso ===
-                "string"
-            ) {
-
-                recurso =
-                    nuevaUrl;
-
-            } else {
-
-                recurso =
-                    new Request(
-                        nuevaUrl,
-                        recurso
-                    );
-
-            }
-
-        }
-
-    } catch (error) {
-
-        console.error(
-            "Error agregando token:",
-            error
-        );
-
-    }
-
-
-    return fetchOriginal(
-        recurso,
-        opciones
-    );
-
-};
-
-
-
-/* ==========================================
+/* =========================================================
    INICIO
-========================================== */
+========================================================= */
 
 actualizarInterfazDev();
+
+console.log(
+    "👨‍💻 Módulo de desarrollador cargado."
+);
