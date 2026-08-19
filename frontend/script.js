@@ -69,7 +69,7 @@ const listaConversaciones =
 
 
 /* =====================================================
-   ICONO DE PALEOIA
+   ICONO PALEOIA
 ===================================================== */
 
 function crearIconoPaleoIA() {
@@ -79,8 +79,11 @@ function crearIconoPaleoIA() {
             'link[rel="icon"]'
         )
     ) {
+
         return;
+
     }
+
 
     const canvas =
         document.createElement(
@@ -90,11 +93,12 @@ function crearIconoPaleoIA() {
     canvas.width = 64;
     canvas.height = 64;
 
+
     const contexto =
-        canvas.getContext("2d");
+        canvas.getContext(
+            "2d"
+        );
 
-
-    /* Fondo */
 
     contexto.fillStyle =
         "#243f25";
@@ -106,8 +110,6 @@ function crearIconoPaleoIA() {
         64
     );
 
-
-    /* Círculo */
 
     contexto.beginPath();
 
@@ -124,8 +126,6 @@ function crearIconoPaleoIA() {
 
     contexto.fill();
 
-
-    /* Dino */
 
     contexto.font =
         "32px Arial";
@@ -148,7 +148,8 @@ function crearIconoPaleoIA() {
             "link"
         );
 
-    icono.rel = "icon";
+    icono.rel =
+        "icon";
 
     icono.type =
         "image/png";
@@ -157,6 +158,7 @@ function crearIconoPaleoIA() {
         canvas.toDataURL(
             "image/png"
         );
+
 
     document.head.appendChild(
         icono
@@ -171,7 +173,9 @@ crearIconoPaleoIA();
    ESCAPAR HTML
 ===================================================== */
 
-function escaparHTML(texto) {
+function escaparHTML(
+    texto
+) {
 
     const div =
         document.createElement(
@@ -194,7 +198,9 @@ function formatearRespuesta(
 ) {
 
     if (!texto) {
+
         return "";
+
     }
 
 
@@ -203,7 +209,7 @@ function formatearRespuesta(
 
 
     /*
-       Eliminar bloques Markdown
+       Quitar bloques Markdown
        de código.
     */
 
@@ -269,8 +275,7 @@ function formatearRespuesta(
 
 
     /*
-       Eliminar etiquetas HTML
-       que puedan llegar por error.
+       Quitar HTML accidental.
     */
 
     texto =
@@ -309,7 +314,9 @@ function formatearRespuesta(
     */
 
     texto =
-        escaparHTML(texto);
+        escaparHTML(
+            texto
+        );
 
 
     /*
@@ -329,7 +336,7 @@ function formatearRespuesta(
 
     texto =
         texto.replace(
-            /\*(.*?)\*/g,
+            /(?<!\*)\*([^*]+)\*(?!\*)/g,
             "<em>$1</em>"
         );
 
@@ -350,13 +357,17 @@ function formatearRespuesta(
 
 
 /* =====================================================
-   SCROLL DEL CHAT
+   SCROLL
 ===================================================== */
 
 function desplazarChatAbajo() {
 
     requestAnimationFrame(
         () => {
+
+            if (!conversacion) {
+                return;
+            }
 
             conversacion.scrollTop =
                 conversacion.scrollHeight;
@@ -367,7 +378,7 @@ function desplazarChatAbajo() {
 
 
 /* =====================================================
-   CREAR MENSAJE USUARIO
+   MENSAJE USUARIO
 ===================================================== */
 
 function agregarMensajeUsuario(
@@ -386,9 +397,7 @@ function agregarMensajeUsuario(
     mensaje.innerHTML = `
 
         <div class="burbuja">
-
             ${escaparHTML(texto)}
-
         </div>
 
     `;
@@ -407,7 +416,7 @@ function agregarMensajeUsuario(
 
 
 /* =====================================================
-   CREAR MENSAJE IA
+   MENSAJE IA
 ===================================================== */
 
 function crearMensajeIA() {
@@ -433,9 +442,7 @@ function crearMensajeIA() {
                 PaleoIA
             </strong>
 
-            <p
-                class="respuesta-stream"
-            ></p>
+            <p class="respuesta-stream"></p>
 
         </div>
 
@@ -457,7 +464,7 @@ function crearMensajeIA() {
 
 
 /* =====================================================
-   MENSAJE DE BIENVENIDA
+   BIENVENIDA
 ===================================================== */
 
 function mostrarBienvenida() {
@@ -503,7 +510,9 @@ async function cargarHistorial(
 ) {
 
     if (!id) {
+
         return false;
+
     }
 
 
@@ -511,11 +520,16 @@ async function cargarHistorial(
 
         const respuesta =
             await fetch(
-                `${BACKEND_URL}/conversacion/${encodeURIComponent(id)}`
+                `${BACKEND_URL}/historial/${encodeURIComponent(id)}`
             );
 
 
         if (!respuesta.ok) {
+
+            console.error(
+                "Error HTTP historial:",
+                respuesta.status
+            );
 
             return false;
 
@@ -559,9 +573,16 @@ async function cargarHistorial(
             of datos.mensajes
         ) {
 
+            /*
+               El backend utiliza:
+               Usuario
+               PaleoIA
+            */
+
             if (
-                mensaje.rol ===
-                "usuario"
+                mensaje.rol === "Usuario"
+                ||
+                mensaje.rol === "usuario"
             ) {
 
                 agregarMensajeUsuario(
@@ -572,6 +593,7 @@ async function cargarHistorial(
 
                 const elemento =
                     crearMensajeIA();
+
 
                 elemento.innerHTML =
                     formatearRespuesta(
@@ -616,6 +638,13 @@ async function crearNuevaConversacion() {
             );
 
 
+        if (!respuesta.ok) {
+
+            return false;
+
+        }
+
+
         const datos =
             await respuesta.json();
 
@@ -656,13 +685,126 @@ async function crearNuevaConversacion() {
 
 
 /* =====================================================
+   BORRAR CONVERSACIÓN
+===================================================== */
+
+async function borrarConversacion(
+    id
+) {
+
+    if (!id) {
+
+        return false;
+
+    }
+
+
+    const confirmar =
+        confirm(
+            "¿Seguro que quieres borrar esta conversación?"
+        );
+
+
+    if (!confirmar) {
+
+        return false;
+
+    }
+
+
+    try {
+
+        const respuesta =
+            await fetch(
+                `${BACKEND_URL}/conversacion/${encodeURIComponent(id)}`,
+                {
+                    method: "DELETE"
+                }
+            );
+
+
+        if (!respuesta.ok) {
+
+            throw new Error(
+                `HTTP ${respuesta.status}`
+            );
+
+        }
+
+
+        const datos =
+            await respuesta.json();
+
+
+        if (!datos.exito) {
+
+            alert(
+                datos.mensaje ||
+                "No se pudo borrar la conversación."
+            );
+
+            return false;
+
+        }
+
+
+        /*
+           Si borramos el chat actual,
+           crear uno nuevo.
+        */
+
+        if (
+            id === conversationId
+        ) {
+
+            conversationId = "";
+
+            localStorage.removeItem(
+                "paleoia_conversation_id"
+            );
+
+
+            await crearNuevaConversacion();
+
+            mostrarBienvenida();
+
+        }
+
+
+        await cargarListaConversaciones();
+
+
+        return true;
+
+
+    } catch (error) {
+
+        console.error(
+            "Error borrando conversación:",
+            error
+        );
+
+
+        alert(
+            "❌ No se pudo borrar la conversación."
+        );
+
+
+        return false;
+    }
+}
+
+
+/* =====================================================
    CARGAR LISTA DE CONVERSACIONES
 ===================================================== */
 
 async function cargarListaConversaciones() {
 
     if (!listaConversaciones) {
+
         return;
+
     }
 
 
@@ -675,7 +817,9 @@ async function cargarListaConversaciones() {
 
 
         if (!respuesta.ok) {
+
             return;
+
         }
 
 
@@ -700,10 +844,82 @@ async function cargarListaConversaciones() {
             "";
 
 
+        if (
+            datos.conversaciones.length === 0
+        ) {
+
+            const vacio =
+                document.createElement(
+                    "div"
+                );
+
+            vacio.textContent =
+                "No hay conversaciones.";
+
+            vacio.style.opacity =
+                ".5";
+
+            vacio.style.fontSize =
+                "13px";
+
+            vacio.style.padding =
+                "10px";
+
+
+            listaConversaciones.appendChild(
+                vacio
+            );
+
+
+            return;
+
+        }
+
+
         for (
             const conversacionItem
             of datos.conversaciones
         ) {
+
+            /*
+               IMPORTANTE:
+
+               El backend devuelve:
+               conversation_id
+
+               No "id".
+            */
+
+            const id =
+                conversacionItem.conversation_id;
+
+
+            if (!id) {
+
+                continue;
+
+            }
+
+
+            const contenedor =
+                document.createElement(
+                    "div"
+                );
+
+
+            contenedor.style.display =
+                "flex";
+
+            contenedor.style.gap =
+                "6px";
+
+            contenedor.style.width =
+                "100%";
+
+
+            /*
+               BOTÓN ABRIR CHAT
+            */
 
             const boton =
                 document.createElement(
@@ -722,11 +938,14 @@ async function cargarListaConversaciones() {
 
 
             boton.dataset.id =
-                conversacionItem.id;
+                id;
 
 
-            boton.style.width =
-                "100%";
+            boton.style.flex =
+                "1";
+
+            boton.style.minWidth =
+                "0";
 
             boton.style.padding =
                 "10px";
@@ -749,24 +968,43 @@ async function cargarListaConversaciones() {
             boton.style.cursor =
                 "pointer";
 
+            boton.style.overflow =
+                "hidden";
+
+            boton.style.textOverflow =
+                "ellipsis";
+
+            boton.style.whiteSpace =
+                "nowrap";
+
 
             if (
-                conversacionItem.id ===
-                conversationId
+                id === conversationId
             ) {
 
                 boton.style.background =
                     "rgba(183,214,124,.16)";
 
+                boton.style.border =
+                    "1px solid rgba(183,214,124,.3)";
+
             }
 
+
+            /*
+               ABRIR CONVERSACIÓN
+            */
 
             boton.addEventListener(
                 "click",
                 async function() {
 
-                    conversationId =
+                    const idSeleccionado =
                         this.dataset.id;
+
+
+                    conversationId =
+                        idSeleccionado;
 
 
                     localStorage.setItem(
@@ -775,21 +1013,107 @@ async function cargarListaConversaciones() {
                     );
 
 
-                    await cargarHistorial(
-                        conversationId
-                    );
+                    const cargado =
+                        await cargarHistorial(
+                            conversationId
+                        );
+
+
+                    if (!cargado) {
+
+                        alert(
+                            "No se pudo cargar esta conversación."
+                        );
+
+                        return;
+
+                    }
 
 
                     cerrarMenu();
 
                     await cargarListaConversaciones();
 
+
+                    if (preguntaInput) {
+
+                        preguntaInput.focus();
+
+                    }
+
                 }
             );
 
 
-            listaConversaciones.appendChild(
+            /*
+               BOTÓN BORRAR
+            */
+
+            const botonBorrar =
+                document.createElement(
+                    "button"
+                );
+
+
+            botonBorrar.type =
+                "button";
+
+
+            botonBorrar.textContent =
+                "🗑️";
+
+
+            botonBorrar.title =
+                "Borrar conversación";
+
+
+            botonBorrar.style.width =
+                "42px";
+
+            botonBorrar.style.minWidth =
+                "42px";
+
+            botonBorrar.style.border =
+                "1px solid rgba(255,100,100,.2)";
+
+            botonBorrar.style.borderRadius =
+                "10px";
+
+            botonBorrar.style.background =
+                "rgba(255,80,80,.08)";
+
+            botonBorrar.style.color =
+                "#ffb4b4";
+
+            botonBorrar.style.cursor =
+                "pointer";
+
+
+            botonBorrar.addEventListener(
+                "click",
+                async function(evento) {
+
+                    evento.stopPropagation();
+
+                    await borrarConversacion(
+                        id
+                    );
+
+                }
+            );
+
+
+            contenedor.appendChild(
                 boton
+            );
+
+            contenedor.appendChild(
+                botonBorrar
+            );
+
+
+            listaConversaciones.appendChild(
+                contenedor
             );
 
         }
@@ -807,7 +1131,7 @@ async function cargarListaConversaciones() {
 
 
 /* =====================================================
-   PREGUNTAR CON STREAMING
+   PREGUNTAR
 ===================================================== */
 
 async function preguntar() {
@@ -817,14 +1141,18 @@ async function preguntar() {
 
 
     if (!pregunta) {
+
         return;
+
     }
 
 
     if (
         botonPreguntar.disabled
     ) {
+
         return;
+
     }
 
 
@@ -833,6 +1161,33 @@ async function preguntar() {
 
     preguntaInput.disabled =
         true;
+
+
+    /*
+       Si por alguna razón
+       no tenemos conversación,
+       crear una.
+    */
+
+    if (!conversationId) {
+
+        const creada =
+            await crearNuevaConversacion();
+
+
+        if (!creada) {
+
+            botonPreguntar.disabled =
+                false;
+
+            preguntaInput.disabled =
+                false;
+
+            return;
+
+        }
+
+    }
 
 
     agregarMensajeUsuario(
@@ -909,21 +1264,16 @@ async function preguntar() {
                 await reader.read();
 
 
-            const value =
-                resultado.value;
+            if (resultado.done) {
 
-            const done =
-                resultado.done;
-
-
-            if (done) {
                 break;
+
             }
 
 
             buffer +=
                 decoder.decode(
-                    value,
+                    resultado.value,
                     {
                         stream: true
                     }
@@ -962,17 +1312,14 @@ async function preguntar() {
                         );
 
 
+                    /*
+                       TEXTO
+                    */
+
                     if (
                         datos.tipo ===
                         "texto"
                     ) {
-
-                        /*
-                           Añadimos el texto
-                           recibido sin
-                           reemplazar lo
-                           anterior.
-                        */
 
                         respuestaElemento.innerHTML +=
                             formatearRespuesta(
@@ -984,6 +1331,10 @@ async function preguntar() {
 
                     }
 
+
+                    /*
+                       FINAL
+                    */
 
                     if (
                         datos.tipo ===
@@ -1006,15 +1357,14 @@ async function preguntar() {
                         }
 
 
-                        /*
-                           Actualizar historial
-                           lateral.
-                        */
-
-                        cargarListaConversaciones();
+                        await cargarListaConversaciones();
 
                     }
 
+
+                    /*
+                       ERROR
+                    */
 
                     if (
                         datos.tipo ===
@@ -1024,12 +1374,10 @@ async function preguntar() {
                         respuestaElemento.innerHTML =
                             `
                             <span class="error-paleoia">
-
                                 ${escaparHTML(
                                     datos.mensaje ||
                                     "Ocurrió un error."
                                 )}
-
                             </span>
                             `;
 
@@ -1039,7 +1387,7 @@ async function preguntar() {
                 } catch (error) {
 
                     console.warn(
-                        "Respuesta no válida:",
+                        "Línea no válida:",
                         linea
                     );
 
@@ -1061,10 +1409,8 @@ async function preguntar() {
         respuestaElemento.innerHTML =
             `
             <span class="error-paleoia">
-
                 ❌ No se pudo conectar
                 con PaleoIA.
-
             </span>
             `;
 
@@ -1084,12 +1430,7 @@ async function preguntar() {
     desplazarChatAbajo();
 
 
-    /*
-       Actualizar lista por si
-       cambió el título.
-    */
-
-    cargarListaConversaciones();
+    await cargarListaConversaciones();
 }
 
 
@@ -1104,8 +1445,7 @@ if (preguntaInput) {
         function(evento) {
 
             if (
-                evento.key ===
-                "Enter"
+                evento.key === "Enter"
                 &&
                 !evento.shiftKey
             ) {
@@ -1151,8 +1491,14 @@ document
                 "click",
                 function() {
 
+                    if (!preguntaInput) {
+                        return;
+                    }
+
+
                     preguntaInput.value =
                         this.textContent.trim();
+
 
                     preguntar();
 
@@ -1249,6 +1595,10 @@ if (nuevoChat) {
 
             if (!creado) {
 
+                alert(
+                    "❌ No se pudo crear una conversación."
+                );
+
                 return;
 
             }
@@ -1263,7 +1613,11 @@ if (nuevoChat) {
             await cargarListaConversaciones();
 
 
-            preguntaInput.focus();
+            if (preguntaInput) {
+
+                preguntaInput.focus();
+
+            }
 
         }
     );
@@ -1278,8 +1632,8 @@ if (nuevoChat) {
 async function iniciarPaleoIA() {
 
     /*
-       Si existe una conversación
-       guardada, cargarla.
+       Intentar recuperar el último
+       chat utilizado.
     */
 
     if (conversationId) {
@@ -1292,17 +1646,38 @@ async function iniciarPaleoIA() {
 
         if (!cargado) {
 
+            /*
+               El ID guardado ya no existe.
+               Crear uno nuevo.
+            */
+
+            localStorage.removeItem(
+                "paleoia_conversation_id"
+            );
+
+            conversationId = "";
+
+        }
+
+    }
+
+
+    /*
+       Si no tenemos conversación,
+       crear una nueva.
+    */
+
+    if (!conversationId) {
+
+        const creada =
             await crearNuevaConversacion();
+
+
+        if (creada) {
 
             mostrarBienvenida();
 
         }
-
-    } else {
-
-        await crearNuevaConversacion();
-
-        mostrarBienvenida();
 
     }
 
@@ -1315,7 +1690,7 @@ async function iniciarPaleoIA() {
 
 
     /*
-       Dejar cursor listo.
+       Cursor.
     */
 
     if (preguntaInput) {
@@ -1326,5 +1701,9 @@ async function iniciarPaleoIA() {
 
 }
 
+
+/* =====================================================
+   INICIAR
+===================================================== */
 
 iniciarPaleoIA();
